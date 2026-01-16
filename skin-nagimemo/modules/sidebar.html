@@ -1,0 +1,96 @@
+<!-- サイドバーモジュール (skin-nagimemo) -->
+
+<div class="widget freespacearea">
+	<p class="widget-title">[[FREESPTITLE]]</p>
+	<div class="widget-body">
+		[[FREESPACE:0]]
+	</div>
+	<p class="Login-Required freespaceedit">
+		<a href="[[FREESPACEEDIT:URL]]" class="Login-Required">編集</a>
+	</p>
+</div>
+
+<div class="widget calendararea">
+	<div class="calendarplace">
+		[[CALENDAR]]
+	</div>
+	<div class="calendarlinks">
+		<a href="[[MOVEMONTH:-1:URL]]"><span class="material-symbols-rounded">chevron_left</span></a>
+		<span class="current-month">Calendar</span>
+		<a href="[[MOVEMONTH:1:URL]]"><span class="material-symbols-rounded">chevron_right</span></a>
+	</div>
+</div>
+
+<!-- カテゴリ表示 -->
+<div class="widget categoryarea">
+	<p class="widget-title">Categories</p>
+	<div class="categoryTree">
+		[[CATEGORY:TREE]]
+	</div>
+</div>
+
+<!-- ハッシュタグ表示 -->
+<div class="widget hashtaglistarea">
+	<p class="widget-title">Hashtags</p>
+	[[HASHTAG:LIST]]
+</div>
+
+<!-- 検索表示 -->
+<div class="widget searcharea">
+	<div id="simplesearch">
+		<p class="widget-title">Search</p>
+		<div class="search-box-wrapper">
+			[[SEARCHBOX]]
+		</div>
+		<p class="switchsearchbox">
+			<a href="#"
+				onclick="document.getElementById('complexsearch').style.display='block'; document.getElementById('simplesearch').style.display='none'; return false;">
+				詳細検索
+			</a>
+		</p>
+	</div>
+	<div id="complexsearch" style="display:none;">
+		<p class="widget-title">Complex Search</p>
+		[[SEARCHBOX:COMPLEX:UDHCO]]
+	</div>
+</div>
+
+<!-- 月別表示 -->
+<div class="widget datelistarea">
+	<p class="widget-title">Archives</p>
+	[[DATEBOX:LIST]]
+</div>
+
+<!-- 月別表示（プルダウン） -->
+<div class="widget datelistarea-pull">
+	[[DATEBOX:PULL]]
+</div>
+
+<!-- 最近の投稿表示 -->
+<div class="widget latestpostarea">
+	<p class="widget-title">Recent Posts</p>
+	[[LATESTLIST]]
+</div>
+
+<!-- 統計表示 -->
+<div class="widget infowidget">
+	<div class="widget-body">
+		<p class="infotitle">Stats</p>
+		<p class="infobody">[[INFO:TARGETPOSTS]] posts</p>
+		<p class="infotitle">Last Update</p>
+		<p class="infobody">[[INFO:LASTUPDATE:Y年G月N日(b) h:m:s]]</p>
+	</div>
+</div>
+
+<!-- ユーティリティ表示 -->
+<div class="widget utilitywidget">
+	<div class="widget-body">
+		<ul class="utility-links">
+			<li><a href="[[GALLERY:URL]]">Gallery Mode</a></li>
+			<li><a href="[[SITEMAP:URL]]">Sitemap</a></li>
+			<li><a href="[[RANDOM:URL]]">Random</a></li>
+			<li><a href="[[REVERSE:URL]]">Reverse Order</a></li>
+			<li><a href="[[RSS:URL]]">RSS Feed</a></li>
+		</ul>
+	</div>
+</div>

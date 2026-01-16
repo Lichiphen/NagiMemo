@@ -1,0 +1,49 @@
+<!-- 
+=============================================================
+ * ![NagiMemo Skin]
+ * 
+ * NagiMemo v1.0.0
+ * Copyright (c) 2026 Lichiphen
+ * Licensed under the MIT License
+ * https://gitlab.com/lichiphen/nagimemo/-/blob/main/LICENSE
+ * ==========================================================
+ */-->
+<!-- ▼1投稿ごとのボックス(Modern Skin) -->
+<article class="onelogbox card" id="pos[[LOOPCOUNT]]">
+    <header class="post-header">
+        <div class="user-profile">
+            <a href="[[USERURL]]" class="avatar-link">
+                [[USERICON]]
+            </a>
+            <div class="user-details">
+                <a href="[[USERURL]]" class="user-name">[[USERNAME]]</a>
+                <a href="[[PARMAURL]]" class="post-date">
+                    [[DATE:Y年G月N日(b) h:m:s]]
+                </a>
+            </div>
+        </div>
+        <div class="post-meta-right">
+             <span class="new-marker">[[NEW]]</span>
+             <a href="[[PARMAURL]]" class="permalink">#[[POSTID]]</a>
+        </div>
+    </header>
+    
+    <div class="post-body">
+        [[COMMENT]]
+    </div>
+    
+    <footer class="post-footer">
+        <div class="footer-left">
+            <div class="category-list">
+                <span class="material-symbols-rounded icon-tiny">folder_open</span>
+                [[CATEGORYLINKS]]
+            </div>
+        </div>
+        <div class="footer-right">
+            <span class="char-count">[[LENGTH]] 文字</span>
+            <a href="[[EDITURL]]" class="edit-btn" title="Edit">
+                <span class="material-symbols-rounded icon-tiny">edit</span>
+            </a>
+        </div>
+    </footer>
+</article>

@@ -1,0 +1,240 @@
+<!-- 
+=============================================================
+ * ![NagiMemo Skin]
+ * 
+ * NagiMemo v1.0.0
+ * Copyright (c) 2026 Lichiphen
+ * Licensed under the MIT License
+ * https://gitlab.com/lichiphen/nagimemo/-/blob/main/LICENSE
+ * ==========================================================
+ */-->
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	[[FAVICON]]
+	<meta http-equiv="Content-Type" content="text/html; charset=[[CHARCODE]]">
+	<title>[[SITUATION:TITLE]] [[FREE:TITLE:MAIN]] [[FREE:TITLE:SUB]]</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="alternate" type="application/rss+xml" title="[[FREE:TITLE:MAIN]]RSSフィード" href="[[RSS:URL:PURE:FULL]]">
+
+	<!-- Google Fonts & Icons -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+	<link rel="stylesheet" href="main.css?2026/01/16v2">
+	[[OGP]]
+</head>
+
+<body class="[[SITUATION:CLASS]] loggedin-[[SYS:ISLOGGEDIN]]">
+
+	<header class="site-header">
+		<div class="header-inner">
+			<div class="headtitle">
+				<h1 class="maintitle">
+					<a href="[[HOME:URL]]">
+						[[FREE:TITLE:MAIN]]
+						<small class="subtitle">[[FREE:TITLE:SUB]]</small>
+					</a>
+				</h1>
+				<div class="mainguide">
+					[[FREE:DESCRIPTION]]
+					[[FREESPACE:1]]
+				</div>
+			</div>
+			<nav class="header-nav"></nav>
+		</div>
+	</header>
+
+	<div class="postarea-wrapper loggedin-[[SYS:ISLOGGEDIN]]">
+		<div class="postarea">
+			[[QUICKPOST]]
+		</div>
+	</div>
+
+	<div class="contents">
+
+		<main class="mainarea">
+			[[SITUATION:HTML]]
+			<div class="tegalog-feed">
+				[[TEGALOG]]
+			</div>
+
+			<div class="pagenavi">
+				<p class="pagelinks">[[NAVI:PREVNEXT]]</p>
+				<p class="pagenums">[[NAVI:PAGELIST]]</p>
+				<p class="pagehome">[[NAVI:TOPPAGE]]</p>
+			</div>
+		</main>
+
+		<aside class="subarea" id="sidebar">
+			<div class="sidebar-header-mobile">
+				<span class="sidebar-title">MENU</span>
+				<button class="close-sidebar" type="button" aria-label="Close Sidebar">
+					<span class="material-symbols-rounded">close</span>
+				</button>
+			</div>
+
+			<div class="subarea-content">
+				[[INCLUDE:FROM-THIS-SKIN-DIR:modules/sidebar.html]]
+			</div>
+		</aside>
+
+	</div>
+
+	[[INCLUDE:FROM-THIS-SKIN-DIR:modules/footer.html]]
+
+	<div id="sidebar-overlay"></div>
+	<div id="post-overlay"></div>
+
+	<button id="fab-post" class="loggedin-[[SYS:ISLOGGEDIN]]" type="button" aria-label="Toggle Post Area">
+		<span class="material-symbols-rounded">edit</span>
+		<span class="fab-text">書く</span>
+	</button>
+
+	<button id="fab-menu" type="button" aria-label="Open Menu">
+		<span class="material-symbols-rounded">menu</span>
+	</button>
+
+	<script src="skin-nagimemo/drag-drop-upload.js?v7"></script>
+	[[JS:LIGHTBOX:JQ]]
+	<!-- Twemoji CDN 利用のためライセンス表記免除 -->
+	<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
+	<script>
+		// FAB Sidebar/Post Toggle and Widget Formatting
+		(function () {
+			var fabMenu = document.getElementById('fab-menu');
+			var fabPost = document.getElementById('fab-post');
+			var closeBtn = document.querySelector('.close-sidebar');
+			var sidebar = document.getElementById('sidebar');
+			var postArea = document.querySelector('.postarea-wrapper');
+			var sidebarOverlay = document.getElementById('sidebar-overlay');
+			var postOverlay = document.getElementById('post-overlay');
+
+			function openSidebar() {
+				closePost(); // Close post if open
+				if (sidebar) sidebar.classList.add('active');
+				if (sidebarOverlay) sidebarOverlay.classList.add('active');
+				if (fabMenu) {
+					fabMenu.querySelector('span').textContent = 'close';
+					fabMenu.classList.add('active');
+				}
+			}
+
+			function closeSidebar() {
+				if (sidebar) sidebar.classList.remove('active');
+				if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+				if (fabMenu) {
+					fabMenu.querySelector('span').textContent = 'menu';
+					fabMenu.classList.remove('active');
+				}
+			}
+
+			function openPost() {
+				closeSidebar(); // Close sidebar if open
+				if (postArea) postArea.classList.add('active');
+				if (postOverlay) postOverlay.classList.add('active');
+				if (fabPost) {
+					fabPost.querySelector('span').textContent = 'close';
+					fabPost.classList.add('active');
+				}
+			}
+
+			function closePost() {
+				if (postArea) postArea.classList.remove('active');
+				if (postOverlay) postOverlay.classList.remove('active');
+				if (fabPost) {
+					fabPost.querySelector('span').textContent = 'edit';
+					fabPost.classList.remove('active');
+				}
+			}
+
+			function toggleSidebar(e) {
+				if (e) e.preventDefault();
+				if (sidebar && sidebar.classList.contains('active')) {
+					closeSidebar();
+				} else {
+					openSidebar();
+				}
+			}
+
+			function togglePost(e) {
+				if (e) e.preventDefault();
+				if (postArea && postArea.classList.contains('active')) {
+					closePost();
+				} else {
+					openPost();
+				}
+			}
+
+			if (fabMenu) fabMenu.onclick = toggleSidebar;
+			if (fabPost) fabPost.onclick = togglePost;
+			if (sidebarOverlay) sidebarOverlay.onclick = closeSidebar;
+			if (postOverlay) postOverlay.onclick = closePost;
+			if (closeBtn) closeBtn.onclick = closeSidebar;
+
+			// PC Scroll FAB Visibility Logic
+			function checkScrollFab() {
+				// Only active on PC (> 900px)
+				if (window.innerWidth > 900) {
+					if (window.scrollY > 300) {
+						if (fabPost) fabPost.classList.add('pc-scroll-visible');
+					} else {
+						if (fabPost) fabPost.classList.remove('pc-scroll-visible');
+					}
+				} else {
+					// On mobile, ensure class is removed to fallback to default CSS
+					if (fabPost) fabPost.classList.remove('pc-scroll-visible');
+				}
+			}
+
+			window.addEventListener('scroll', checkScrollFab);
+			window.addEventListener('resize', checkScrollFab);
+			// Initial check
+			checkScrollFab();
+
+			// Widget Link Fix: Merge link and post count for Archives, Hashtags, and Categories
+			function mergeLinkAndCount(containerSelector, linkClass) {
+				var areas = document.querySelectorAll(containerSelector);
+				for (var i = 0; i < areas.length; i++) {
+					var links = areas[i].querySelectorAll(linkClass);
+					for (var j = 0; j < links.length; j++) {
+						var link = links[j];
+						// Find .num that is a sibling (next element)
+						var sibling = link.nextSibling;
+						while (sibling) {
+							if (sibling.nodeType === 1 && sibling.classList && sibling.classList.contains('num')) {
+								link.appendChild(sibling);
+								break;
+							}
+							sibling = sibling.nextSibling;
+						}
+					}
+				}
+			}
+
+			mergeLinkAndCount('.widget.datelistarea', '.datelistlink');
+			mergeLinkAndCount('.hashtaglistarea', '.taglink');
+			// For categories, target both .catlink and .categorylink
+			mergeLinkAndCount('.categoryarea', '.catlink');
+			mergeLinkAndCount('.categoryarea', '.categorylink');
+
+			// Execute Twemoji
+			if (typeof twemoji !== 'undefined') {
+				twemoji.parse(document.body);
+			}
+
+			// Enable animations after page load (prevent initial animation flash)
+			setTimeout(function () {
+				document.body.classList.add('animations-ready');
+			}, 100);
+		})();
+	</script>
+</body>
+
+</html>

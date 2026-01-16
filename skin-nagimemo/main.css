@@ -1,0 +1,1604 @@
+@charset "utf-8";
+
+/*  Root Variables & Theme
+ * ![NagiMemo Skin]
+ * 
+ * NagiMemo v1.0.0
+ * Copyright (c) 2026 Lichiphen
+ * Licensed under the MIT License
+ * https://gitlab.com/lichiphen/nagimemo/-/blob/main/LICENSE
+ */
+:root {
+    /* Colors */
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #475569;
+    --accent-color: #06b6d4;
+    
+    --bg-body: #f1f5f9;
+    --bg-card: #ffffff;
+    --bg-header: #ffffff;
+    
+    --text-main: #334155;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    
+    --border-color: #e2e8f0;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-fab: 0 10px 25px -5px rgb(37 99 235 / 0.4);
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    
+    /* Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    
+    /* Layout */
+    --header-height: 70px;
+    --sidebar-width: 320px;
+    --content-max-width: 1200px;
+}
+
+/* ==========================================================================
+   Reset & Base
+   ========================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans JP', 'Poppins', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-main);
+    background-color: var(--bg-body);
+    -webkit-font-smoothing: antialiased;
+    /* Sticky Footer */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Twemoji Fix (prevent giant size and block display) */
+img.emoji {
+    height: 1.2em;
+    width: 1.2rem;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.2em;
+    display: inline-block !important; /* Force inline */
+    flex-shrink: 0; /* Prevent shrinking in flex containers */
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.site-header {
+    background-color: var(--bg-header);
+    height: var(--header-height);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 100;
+    flex-shrink: 0; /* Prevent header shrinking */
+}
+
+.header-inner {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-sm);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.maintitle {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.maintitle a {
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.mainguide {
+    display: none;
+}
+@media(min-width: 900px) {
+    .maintitle {
+        font-size: 1.75rem;
+    }
+}
+
+
+/* ==========================================================================
+   Layout Container
+   ========================================================================== */
+.contents {
+    max-width: var(--content-max-width);
+    margin: var(--spacing-lg) auto;
+    padding: 0 var(--spacing-sm);
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: flex-start;
+    flex: 1; /* Push footer down */
+    width: 100%;
+}
+
+.mainarea {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ==========================================================================
+   Sidebar (PC) - Scrolls with page
+   ========================================================================== */
+.subarea {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    /* Removed sticky to allow normal scrolling on PC */
+    position: relative; 
+}
+@media (min-width: 901px) {
+    .subarea-content {
+        padding-top: 1rem;
+    }
+}
+
+/* ==========================================================================
+   Sidebar (Mobile)
+   ========================================================================== */
+.sidebar-header-mobile {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+.sidebar-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+.close-sidebar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+}
+
+/* Mobile Styling */
+@media (max-width: 900px) {
+    .contents {
+        display: block;
+        margin-top: var(--spacing-sm);
+    }
+    
+    .contents .mainarea {
+        width: 100%;
+        max-width: 100%;
+        margin-right: 0;
+    }
+    
+    .subarea {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        max-height: 100vh;
+        background: var(--bg-card);
+        z-index: 1000;
+        padding: var(--spacing-md);
+        box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+    }
+    
+    .subarea.active {
+        right: 0;
+    }
+
+    .sidebar-header-mobile {
+        display: flex;
+    }
+}
+
+/* Overlays */
+#sidebar-overlay, #post-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(2px);
+}
+#sidebar-overlay.active, #post-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* FABs (X-style smaller size) */
+#fab-menu, #fab-post {
+    position: fixed;
+    right: 1.25rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-fab);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+.fab-text {
+    display: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-left: 6px;
+}
+#fab-menu { bottom: 1.25rem; }
+#fab-post { bottom: 5rem; background: var(--accent-color); box-shadow: 0 6px 16px -3px rgb(6 182 212 / 0.5); }
+
+/* Hide FAB post button when not logged in (tegalog [[SYS:ISLOGGEDIN]] outputs NO) */
+#fab-post.loggedin-NO {
+    display: none !important;
+}
+
+/* Hide post area wrapper when not logged in */
+.postarea-wrapper.loggedin-NO {
+    display: none !important;
+}
+
+#fab-menu span, #fab-post span {
+    font-size: 22px;
+    pointer-events: none;
+}
+#fab-menu:active, #fab-post:active {
+    transform: scale(0.92);
+    opacity: 0.9;
+}
+
+@media (min-width: 901px) {
+    #fab-menu, #sidebar-overlay, .close-sidebar {
+        display: none !important;
+    }
+    
+    /* PC Scroll FAB */
+    #fab-post {
+        display: flex !important; /* Force display on PC */
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+        width: auto;
+        border-radius: 999px;
+        padding: 0 20px;
+        right: max(20px, calc((100% - var(--content-max-width)) / 2 + 20px)); /* Align with sidebar column */
+        bottom: 30px;
+    }
+    
+    #fab-post.pc-scroll-visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+    
+    #fab-post .fab-text {
+        display: inline-block;
+    }
+    
+    #fab-post span {
+        font-size: 20px;
+    }
+
+    /* PC Center Modal for Post Area */
+    .postarea-wrapper.active {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 650px;
+        height: auto;
+        max-height: 85vh;
+        overflow-y: auto;
+        z-index: 1002;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        padding: 40px;
+        border: 1px solid rgba(0,0,0,0.05);
+        animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: block !important;
+    }
+    
+    /* Enhance form layout in modal */
+    .postarea-wrapper.active .postarea form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    /* Textarea styling in modal */
+    .postarea-wrapper.active textarea.tegalogpost {
+        min-height: 180px;
+        font-size: 1.1rem;
+        padding: 15px;
+        border: 2px solid var(--border-color);
+        background: #f8fafc;
+        border-radius: 12px;
+    }
+    .postarea-wrapper.active textarea.tegalogpost:focus {
+        background: #fff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    /* Show Overlay on PC */
+    #post-overlay.active {
+        display: block !important;
+    }
+
+    @keyframes modalPop {
+        from { opacity: 0; transform: translate(-50%, -40%) scale(0.9); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+}
+
+
+/* ==========================================================================
+   Post Card (Skin Onelog)
+   ========================================================================== */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s;
+}
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.user-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.user-avatar {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.post-date {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 2px;
+}
+
+.post-meta-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.permalink {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-family: monospace;
+}
+
+.new-marker {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.post-body {
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: var(--spacing-md);
+    word-break: break-all;
+}
+
+.post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin: var(--spacing-sm) calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1) calc(var(--spacing-md) * -1);
+    background: #fafafa;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+@media (max-width: 600px) {
+    .post-footer {
+        flex-direction: column;
+        align-items: flex-start; /* 左寄せに変更 */
+        gap: var(--spacing-sm);
+    }
+}
+
+.footer-left .category-list {
+    display: flex;
+    flex-wrap: wrap; /* モバイルで折り返しを許可 */
+    align-items: center;
+    gap: 0.4rem;
+}
+.catseparator {
+    display: none; /* カンマを非表示にしてチップ風に見せる */
+}
+.footer-left .category-list a {
+    background: var(--bg-body);
+    padding: 2px 10px;
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    white-space: nowrap; /* タグ内での改行を防止 */
+    display: inline-block;
+}
+.footer-left .category-list a:hover {
+    background: var(--border-color);
+    color: var(--text-main);
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+}
+@media (max-width: 600px) {
+    .footer-right {
+        width: 100%;
+        justify-content: flex-end;
+        padding-top: 4px;
+        border-top: 1px dashed var(--border-color);
+    }
+}
+
+.icon-tiny {
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+
+/* ==========================================================================
+   Sidebar Widgets
+   ========================================================================== */
+.widget {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+}
+@media (min-width: 901px) {
+    .widget {
+        box-shadow: none;
+        border: none;
+        background: transparent;
+        padding: 0 0 var(--spacing-md) 0;
+        border-bottom: 1px dashed var(--border-color);
+    }
+    .widget:last-child {
+        border-bottom: none;
+    }
+}
+
+.widget-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--spacing-sm) 0;
+    display: flex;
+    align-items: center;
+}
+.widget-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 16px;
+    background: var(--primary-color);
+    margin-right: 8px;
+    border-radius: 2px;
+}
+
+/* Links lists in sidebar */
+.widget ul, .widget li {
+    list-style: none;
+    padding-left: 10px;
+    margin: 0;
+}
+.widget li {
+    margin-bottom: 0;
+}
+/* Ensure links take full width and handle internal spans for single-line display */
+.widget li a {
+    color: var(--text-main);
+    display: flex; 
+    justify-content: flex-start;
+    align-items: baseline;
+    padding: 8px 0; /* Expanded touch target */
+    width: 100%;
+}
+/* Archives, Hashtags, Categories should stay on one line */
+.datelistarea li a,
+.hashtaglistarea li a,
+.categoryarea li a {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+/* Recent Posts and others should be allowed to wrap */
+.latestpostarea li a {
+    flex-wrap: wrap;
+    white-space: normal;
+    word-break: break-all;
+    line-height: 1.4;
+    display: inline-flex; /* Use inline-flex for better alignment with emojis */
+    align-items: center;
+}
+.latestpostarea li a img.emoji {
+    margin-left: 4px;
+}
+.widget li a:hover {
+    color: var(--primary-color);
+}
+
+/* Fix for "sinking" count on hover in sidebar links */
+.widget li a .num {
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8em;
+    opacity: 0.6;
+}
+.widget li a:hover .num {
+    opacity: 1;
+}
+
+/* Category Tree specific fix: force single line like Hashtags */
+.categoryTree li {
+    display: block;
+}
+.categoryTree li > a,
+.categoryTree li > .categorylink {
+    display: inline-flex !important;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    justify-content: flex-start;
+}
+/* Ensure .num inside category links stays inline */
+.categoryTree .num {
+    display: inline !important;
+}
+
+/* Calendar */
+.calendarplace table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.calendarplace th {
+    color: var(--primary-color);
+    font-weight: normal;
+}
+.calendarplace td {
+    text-align: center;
+    padding: 2px;
+    width: 32px; /* 固定幅 */
+    height: 32px; /* 固定高 */
+    vertical-align: middle;
+}
+.calendarplace td a,
+.calendarplace td .nolink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin: 0 auto;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+.calendarplace td a {
+    background: var(--primary-color);
+    color: white;
+}
+.calendarplace td a:hover {
+    background: var(--primary-hover);
+}
+.calendarplace td.today a,
+.calendarplace td.today .nolink {
+    border: 2px solid var(--primary-color);
+}
+.calendarlinks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+/* Search */
+.search-box-wrapper input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: var(--bg-body);
+    transition: all 0.2s;
+}
+.search-box-wrapper input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.search-box-wrapper input[type="submit"] {
+    margin-top: 8px;
+    width: 100%;
+    padding: 10px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.search-box-wrapper input[type="submit"]:hover {
+    background: var(--text-main);
+}
+
+/* Complex Search Refresh */
+.complexsearch {
+    margin-top: var(--spacing-sm);
+}
+.complexsearch .searchbox {
+    display: flex;
+    gap: 8px;
+    margin-bottom: var(--spacing-md);
+}
+.complexsearch .queryinput {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    background: var(--bg-body);
+    transition: all 0.2s;
+}
+.complexsearch .queryinput:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+.complexsearch .submitbutton {
+    padding: 8px 16px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.complexsearch .submitbutton:hover {
+    background: var(--primary-hover);
+}
+
+.searchoptions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.searchoptions li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+.searchoptions .solabel {
+    width: 100px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.searchoptions select {
+    flex: 1;
+    min-width: 150px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: white;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 32px;
+}
+.searchoptions select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Date Limit Box (Archives pull-down) */
+.datelistarea-pull .datelimitbox {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.datelimitpull {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px;
+    padding-right: 36px;
+    transition: all 0.2s;
+}
+.datelimitpull:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.datelistarea-pull .submitbutton {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.datelistarea-pull .submitbutton:hover {
+    background: var(--primary-hover);
+}
+
+.datelimitboxoptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.datelimitboxoptions label {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    cursor: pointer;
+}
+.datelimitboxoptions input[type="radio"] {
+    margin-right: 6px;
+    accent-color: var(--primary-color);
+}
+
+
+/* ==========================================================================
+   Post Area (QuickPost)
+   ========================================================================== */
+.postarea-wrapper {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--spacing-sm) 0;
+}
+
+@media (max-width: 900px) {
+    .postarea-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        z-index: 1000;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: var(--bg-card);
+        transform: translateY(100%);
+        padding: var(--spacing-md) 0;
+        padding-bottom: 80px; /* Space for FAB buttons */
+        visibility: hidden; /* Hidden until animations-ready */
+    }
+    /* Only enable transition after page load */
+    body.animations-ready .postarea-wrapper {
+        visibility: visible;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .postarea-wrapper.active {
+        transform: translateY(0);
+        visibility: visible;
+    }
+}
+
+
+.postarea {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-sm);
+}
+
+textarea.tegalogpost {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    font-family: inherit;
+    font-size: 16px; /* Prevent zoom on iOS */
+    resize: none;
+    min-height: 100px;
+    transition: border-color 0.2s;
+}
+textarea.tegalogpost:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Modern Post Area Layout (Mobile) */
+@media (max-width: 900px) {
+    .postarea {
+        display: flex;
+        flex-direction: column;
+    }
+    .postarea form {
+        display: flex;
+        flex-direction: column;
+    }
+    /* Move textarea to bottom, buttons to top */
+    .postarea form > *:not(textarea):not(.tegalogpost) {
+        order: -1;
+    }
+    .postarea textarea.tegalogpost {
+        order: 10;
+        margin-top: 0.75rem;
+    }
+}
+
+.postbutton {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 28px;
+    border-radius: var(--radius-lg);
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+}
+.postbutton:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-md);
+}
+
+/* Function Buttons (日時, 装飾, 画像, リンク, # etc.) */
+.postarea button,
+.postarea input[type="button"] {
+    background: var(--bg-body);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin: 4px 8px 4px 0; /* Increased horizontal margin */
+    transition: all 0.15s;
+}
+.postarea button:hover,
+.postarea input[type="button"]:hover {
+    background: var(--border-color);
+    border-color: var(--text-muted);
+}
+
+/* Category Chips (Checkbox style) */
+.catChecks {
+    display: flex !important; /* Force flex to allow gap functionality */
+    flex-wrap: wrap;
+    gap: 8px 8px; /* Significantly increased spacing between chips */
+    width: 100% !important;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 12px;
+}
+.catChecks label {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 6px 14px 6px 10px; /* Slightly larger padding */
+    font-size: 0.85rem; /* Better readability */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0;
+    box-shadow: var(--shadow-sm);
+}
+.catChecks label:hover {
+    border-color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.05);
+}
+.catChecks input[type="checkbox"] {
+    margin-right: 6px;
+    accent-color: var(--primary-color);
+}
+.catChecks input[type="checkbox"]:checked + * {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Status Settings (Fixed, Draft, Lock, etc.) */
+[id^="stateSet"] {
+    display: none; /* Hidden by default, let JS show/hide it */
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 0.5rem 0;
+    width: auto;
+}
+[id^="stateSet"] .catChecks {
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+}
+[id^="stateSet"] input[type="button"] {
+    margin: 0 0 0 4px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+}
+
+/* Hashtag Easy Input Select */
+.hashtagEasyInput {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: white;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    cursor: pointer;
+    margin-right: 8px;
+    transition: all 0.2s;
+}
+.hashtagEasyInput:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.decoBtns {
+    display: inline-block;
+}
+.decoBtns > span, .decoBtns > button {
+    display: inline-block;
+}
+
+
+/* ==========================================================================
+   Page Navigation
+   ========================================================================== */
+.pagenavi {
+    margin-top: var(--spacing-lg);
+    text-align: center;
+}
+.pagelinks a, .pagenums a {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 2px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+}
+.pagelinks a:hover, .pagenums a:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+.pagenums b {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 2px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-sm);
+    font-weight: normal;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+footer {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto; /* Ensure it stays at the bottom of the flex container */
+    padding: var(--spacing-lg) 0;
+    text-align: center;
+    color: var(--text-muted);
+}
+.footer-inner {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-sm);
+    width: 100%;
+}
+.footer-nav {
+    margin-bottom: var(--spacing-sm);
+}
+.footer-nav a {
+    margin: 0 10px;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Legacy / Generic Decorations
+   ========================================================================== */
+.decorationB { font-weight: bold; }
+.decorationI { font-style: italic; }
+.decorationU { text-decoration: underline; text-decoration-color: var(--accent-color); text-decoration-style: double; }
+.decorationS { font-size: 0.8em; }
+.decorationT { font-size: 0.6em; }
+.decorationD { text-decoration: line-through; color: var(--text-light); }
+.decorationE { font-weight: bold; color: var(--primary-color); background: rgba(37,99,235,0.05); padding: 0 4px; border-radius: 2px; font-style: initial;}
+
+.decorationQ {
+    margin: 1.5em 0;
+    padding: 1em;
+    border-left: 4px solid var(--primary-color);
+    background: #f8fafc;
+    color: var(--secondary-color);
+}
+.decorationQ + br { display: none; }
+
+.embeddedimage {
+    border-radius: var(--radius-sm);
+    max-width: 100%;
+}
+
+.url {
+    word-break: break-all;
+}
+
+/* YouTube Responsive (only for YouTube iframes) */
+article iframe[src*="youtube"],
+article iframe[src*="youtu.be"],
+video.embeddedmovie {
+    max-width: 100% !important;
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    height: auto !important;
+    border-radius: var(--radius-sm);
+    border: none;
+}
+
+/* ---------------------------------------------------
+   Multiple Images Grid Layout (2 columns)
+   --------------------------------------------------- */
+/* ---------------------------------------------------
+   Multiple Images Grid Layout (2 columns)
+   --------------------------------------------------- */
+/*
+   Selector Logic:
+   1. ".imagelink:has(+ .imagelink)" targets an image followed by another image.
+   2. ".imagelink:has(+ .imagelink) + .imagelink" targets the image immediately following the above.
+   
+   This creates a chain. We want ALL images in a sequence of 2+ to form a grid.
+   The combination below targets any image involved in a sequence of 2 or more.
+*/
+.imagelink:has(+ .imagelink),
+.imagelink + .imagelink {
+    display: inline-block;
+    width: calc(50% - 4px); /* 50% minus half gap */
+    margin-right: 8px;      /* Default right gap */
+    margin-bottom: 8px;     /* Vertical gap */
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+/* 
+   Margin Reset for Even Items in the sequence 
+   Note: Since we cannot easily scope "nth-child" to a class mixed with text nodes,
+   we use the adjacent sibling combinator logic heavily.
+   
+   However, strictly alternating margins in a raw list of nodes is tricky with simple CSS.
+   A more robust way for 2-column grid without a wrapper is difficult with just siblings.
+   
+   Adjusted Logic:
+   - For now, let's try to ensure the first one (if followed by one) gets margin, 
+     and the one immediately following (2nd) gets NO margin.
+   - Then the 3rd (which follows the 2nd) needs margin again.
+*/
+
+/* Reset margin for the item following ANY image link (potentially even items) */
+.imagelink + .imagelink {
+    margin-right: 0;
+}
+
+/* 
+   BUT, if that item is ITSELF followed by another image link, it might be the 1st of a new pair?
+   No, in a sequence of 1,2,3:
+   1: has(+), gets base margin.
+   2: is(+), gets margin-right: 0.
+   3: is(+), gets margin-right: 0 (from rule above) -> THIS IS WRONG for odd items.
+   
+   Fix: Target odd items (3rd, 5th...) using generalized sibling combination is hard.
+   
+   Alternative Fix: 
+   Use flex/grid behavior if we could wrap them, but we can't change HTML structure easily.
+   
+   Compromise:
+   Make ALL images 50% - 4px.
+   Give ALL images a small margin-right and margin-left to center them, 
+   OR distribute space evenly.
+   
+   Let's try a safer "Gap" approach using margins on both sides for all items.
+*/
+
+.imagelink:has(+ .imagelink),
+.imagelink + .imagelink {
+    width: calc(50% - 4px);
+    margin-right: 8px;
+    margin-bottom: 8px;
+    margin-left: 0;
+}
+
+/* 偶数番目（2, 4, 6...）のマージン削除を試みる強いセレクタ */
+/* 
+   CSS alone without a wrapper relies on DOM order.
+   If "imagelink" elements are directly adjacent with no text nodes, 
+   CSS whitespace might affect inline-block. 
+   
+   Let's toggle the margins:
+   1 (odd): Margin Right
+   2 (even): No Margin Right
+   3 (odd): Margin Right
+   
+   Logic:
+   1: .imagelink:has(+ .imagelink) -> Targets 1, 2, 3... (except last)
+   
+   Let's define a "Sequence Start"
+   A .imagelink is a start if it is NOT preceded by .imagelink.
+*/
+
+/* 1st, 3rd, 5th... (This is hard without :nth-of-type limited to class) */
+/* Reverting to simpler "Margin Right always, except last in row" is hard without wrapping. */
+
+/*
+   NEW STRATEGY: 
+   Give ALL grid images a predictable spacing.
+   Width: 49%.
+   Justify: Space between? No parent control.
+   
+   Let's try:
+   Odd items: margin-right: 2%
+   Even items: margin-right: 0
+   
+   Since we can't detect Odd/Even easily on class selectors amidst other nodes;
+   we will force a small gap on ALL, and accept a tiny ragged edge, 
+   OR make them slightly smaller to fit.
+*/
+
+.imagelink:has(+ .imagelink),
+.imagelink + .imagelink {
+    width: 49%; 
+    margin-right: 1.5%;
+    margin-bottom: 1.5%;
+}
+
+/* Every 2nd image (visually) needs no margin if we want perfect flush. 
+   If we can't target specifically, we make them small enough to fit.
+   width: 49% + 1.5% margin = 50.5% -> Overflow.
+   
+   Recalculate:
+   Width: 49%
+   Margin-Right: 2%
+   Total 51% -> Wraps.
+   
+   Valid Grid:
+   Width: 48.5%
+   Margin-Right: 1%
+   Margin-Left: 0
+   (Left item 48.5 + 1 + Right item 48.5 = 98%) -> Fits.
+*/
+.imagelink:has(+ .imagelink),
+.imagelink + .imagelink {
+    width: 48.5%;
+    margin-right: 1%; /* Small gap always */
+    margin-bottom: 8px;
+}
+/* No specific clear for 2nd item, just let it wrap naturally */
+
+/* Ensure images inside fill the container */
+.imagelink:has(+ .imagelink) .embeddedimage,
+.imagelink + .imagelink .embeddedimage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 1 / 1; 
+}
+/* Utility */
+/* Hide edit button for non-logged-in users (uses body class from skin-cover.html) */
+body.loggedin-NO .edit-btn {
+    display: none !important;
+}
+
+/* ================================================================ */
+/* てがろぐVer 4.5.5β以降で使える、カード型リンク用CSSの抜粋です。 */
+/* お使いのスキンのCSSに追記するなどしてご活用下さい。              */
+/* ================================================================ */
+
+/* ---------------------- */
+/* ▼カード型リンクの装飾 */
+/* ---------------------- */
+.cardlink {
+display: inline-block;
+width: 100%;
+max-width: 500px;               /* 最大幅 (※横幅を制限したくない場合はこれを削除して下さい) */
+padding: 0 0.25em 0.5em 0;      /* 内側の余白量 */
+font-size: 0.9rem;              /* 文字サイズ */
+text-decoration: none;          /* リンク文字の下線を消す */
+vertical-align: middle;         /* 行内の上下方向では中央配置 */
+}
+
+/* リンクカードの装飾(サイズS/L共通部分) */
+/* カード外枠 */
+.cardlinkbox {
+    border: 2px solid #fdf2f2; /* 非常に淡いピンクの枠線 */
+    border-radius: 16px;      /* 大きめの角丸で柔らかく */
+    background-color: #fff;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); /* 非常に微細な影 */
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+}
+/* (マウスが載ったとき) */
+.cardlinkbox:hover {
+    background-color: #fffaf0; /* 暖かみのある非常に淡いオレンジ */
+    border-color: #ffe4e1;     /* ミスティローズ */
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.2); /* 柔らかいピンク系の影 */
+}
+/* ▽リンクカード内の画像枠 (※読み込まれたog:imageは、この枠に《背景画像として》描画されます) */
+.cardlinkimage {
+background-image: linear-gradient(-30deg, #8a8, #e0f0e0);  /* プレースホルダ的な背景グラデーション(※og:imageの画像指定が読み込まれたら、この値は上書きされます) */
+background-size: cover;             /* 背景画像で枠を埋める */
+background-position: center center; /* 背景画像を中央に寄せる */
+background-repeat: no-repeat;       /* 背景画像を繰り返さない */
+}
+/* ▽リンクカード内のテキスト枠 */
+.cardlinktextbox {
+display: flex;          /* Flexbox化 */
+flex-direction: column; /* 子要素を縦方向に並べる */
+padding: 0.5em 1em;     /* 内側の余白量 */
+}
+/* ▽リンクカードのテキスト枠内の3要素共通 */
+.cardlinktitle,
+.cardlinkdescription,
+.cardlinkurl {
+/* ↓表示行数を制限するための準備 (※システム側では文字数は制限せずに「記述されている全文字」をHTMLに出力しますので、表示分量を制限したい場合はCSSで制御する必要があります。) */
+display: -webkit-box;          /* -webkit-line-clampを使うために必要な記述1 ※A */
+-webkit-box-orient: vertical;  /* -webkit-line-clampを使うために必要な記述2 ※A */
+overflow: hidden;              /* 表示量を制限する場合に必須の記述 */
+/* ↓制限の仕様 */
+line-clamp: 1;                 /* 1行だけ見せる (将来的にはこれだけで実現可能かも) */
+-webkit-line-clamp: 1;         /* 1行だけ見せる (今のブラウザにはこちらが必要で、そのためには上記「※A」も必要) */
+text-overflow: ellipsis;       /* 省略記号(三点リーダー) */
+}
+/* リンクタイトル */
+.cardlinktitle {
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1rem;
+    padding-bottom: 0.4em;
+}
+/* リンク概要文 */
+.cardlinkdescription {
+    line-height: 1.5;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+}
+/* リンクドメイン */
+.cardlinkurl {
+    color: var(--text-light);
+    font-size: 0.75rem;
+    margin-top: auto;
+}
+
+/* ----------------------------------- */
+/* リンクカードの装飾(サイズS用の追記) */		/* 前述の「サイズS/L共通部分」と合わせて、1つのカードデザインになります。 */
+/* ----------------------------------- */
+.cardsize-S {
+flex-direction: row;                /* 画像とテキストは横に並べる(Flexbox) */
+}
+/* ▽リンクカード内の画像枠 */
+.cardsize-S .cardlinkimage {
+min-width: 100px;           /* 最小の横幅 */
+min-height: 100px;          /* 最小の高さ */
+border-radius: 6px 0 0 6px; /* 左側だけ角丸 */
+flex-shrink: 0;             /* 枠サイズを自動縮小させない */
+}
+/* ▽リンクカード内のテキスト枠 */
+.cardsize-S .cardlinktextbox {
+    border-left: 2px solid #fdf2f2;
+    justify-content: center;
+}
+/* ▽リンクカードのテキスト枠内の3要素 */
+.cardsize-S .cardlinktitle { order: 2; }        /* タイトルは、2番目に表示 */
+.cardsize-S .cardlinkdescription { order: 3; }  /* 概要文　は、3番目に表示 */
+.cardsize-S .cardlinkurl { order: 1; }          /* ドメインは、1番上に表示 */
+
+/* ----------------------------------- */
+/* リンクカードの装飾(サイズL用の追記) */		/* 前述の「サイズS/L共通部分」と合わせて、1つのカードデザインになります。 */
+/* ----------------------------------- */
+.cardsize-L {
+flex-direction: column;             /* 画像とテキストは縦に並べる(Flexbox) */
+}
+/* ▽リンクカード内の画像枠 */
+.cardsize-L .cardlinkimage {
+aspect-ratio: 1.91 / 1;     /* 画像枠の縦横比を指定= (横)1.91：(縦)1 */
+width: 100%;                /* 横幅は枠最大に拡げる */
+height: auto;               /* 高さは自動計算 */
+border-radius: 6px 6px 0 0; /* 上側だけ角丸 */
+}
+/* ▽リンクカード内のテキスト枠 */
+.cardsize-L .cardlinktextbox {
+    border-top: 2px solid #fdf2f2;
+}
+/* ▽リンクカードのテキスト枠内の3要素 */
+.cardsize-L .cardlinktitle { font-weight: bold; }
+.cardsize-L .cardlinkdescription { min-height: 3em; }
+.cardsize-L .cardlinkurl {
+    border-top: 1px dashed #ffe4e1;
+    margin-top: 0.7em;
+    padding-top: 0.5em;
+    font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   Utility / Components
+   ========================================================================== */
+.linkbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white !important;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    margin: 10px 0;
+}
+
+.linkbtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+}
+
+.linkbtn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px -5px rgba(37, 99, 235, 0.6);
+}
+
+.linkbtn:hover::before {
+    opacity: 1;
+}
+
+.linkbtn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Read More Button (decorationH) */
+.readmorebutton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    margin: 1rem 0;
+    padding: 10px 16px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.readmorebutton:hover {
+    background: var(--bg-body);
+    border-color: var(--text-light);
+    transform: translateY(-1px);
+}
+
+.readmorebutton::before {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.25rem;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.readmoreopen::before {
+    content: 'add'; /* Material Symbols "+" */
+}
+
+.readmoreclose::before {
+    content: 'remove'; /* Material Symbols "-" */
+}
+
+/* ==========================================================================
+   Drag & Drop Overlay
+   ========================================================================== */
+#drag-drop-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(37, 99, 235, 0.85); /* Primary color overlay */
+    z-index: 9999;
+    padding: 20px;
+    display: none; /* Toggled by JS */
+    align-items: center;
+    justify-content: center;
+    pointer-events: none; /* Allow events to pass through until active */
+    transition: opacity 0.2s;
+}
+#drag-drop-overlay.active {
+    pointer-events: auto; /* Catch the drop */
+    opacity: 1;
+}
+.drag-message {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    border: 4px dashed #fff;
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    text-align: center;
+}

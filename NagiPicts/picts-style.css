@@ -1,0 +1,108 @@
+@charset "utf-8";
+
+/* =================================================================
+   NagiPicts Grid Styles (Overrides NagiMemo Defaults)
+   Root Variables & Theme
+   ![NagiMemo Skin]
+   
+   NagiMemo v1.0.0
+   Copyright (c) 2026 Lichiphen
+   Licensed under the MIT License
+   https://gitlab.com/lichiphen/nagimemo/-/blob/main/LICENSE
+ */
+
+/* Full Width Main Area */
+.mainarea.full-width {
+    max-width: 100%;
+    flex: 1;
+}
+
+/* Grid Container */
+.picts-grid {
+    display: grid;
+    /* Responsive Grid: Adjust minmax for card size preference */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    width: 100%;
+}
+
+/* Card Style (Square) */
+.onelogbox {
+    aspect-ratio: 1 / 1;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 0; /* Image takes full space usually, or padded? Let's use padding for card feel */
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+}
+
+/* Hover Effect */
+.onelogbox:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+.onelogbox:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--primary-color);
+    pointer-events: none;
+}
+
+/* Image Handling */
+.onelogbox img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+}
+/* If content is just an image, ensure it fills the box or aspect ratio */
+.image-container {
+    flex: 1;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.image-container a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Meta Info */
+.logtitle {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.logtitle a { color: var(--text-main); }
+.logtitle a:hover { color: var(--primary-color); text-decoration: none; }
+
+.loginfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+/* Auth Control: Hide edit buttons when not logged in */
+body.loggedin-NO .edit-links,
+body.loggedin-NO .edit-btn,
+body.loggedin-NO a[href*="mode=edit"],
+body.loggedin-NO a[href*="mode=delete"] {
+    display: none !important;
+}

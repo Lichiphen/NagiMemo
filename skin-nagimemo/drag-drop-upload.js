@@ -1,6 +1,12 @@
 (function() {
     'use strict';
     
+    // Early exit if not logged in
+    if (document.body.classList.contains('loggedin-NO')) {
+        console.log('NagiMemo: Drag-drop disabled (not logged in)');
+        return;
+    }
+    
     var overlay = null;
     var isActive = false;
     var collectedFiles = []; // Store files across multiple drops

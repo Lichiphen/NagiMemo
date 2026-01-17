@@ -1,12 +1,23 @@
-<!-- サイドバーモジュール (skin-nagimemo) -->
-
+ [[!-- サイドバーモジュール  (skin-nagimemo) --]]
 <div class="widget freespacearea">
 	<p class="widget-title">[[FREESPTITLE]]</p>
 	<div class="widget-body">
 		[[FREESPACE:0]]
+ [[!-- プロフィールへのリンク。ユーザーがタッチやクリックすると、フリースペースの [[FREESPACE:1]]が表示されます --]]
+	[[!-- 不要の場合はこの行から下を削除してください --]]
+        <div class="profile-link-area">
+            <a href="#" class="linkbtn_profile">
+                <span class="material-symbols-rounded">person</span>
+                プロフィール
+            </a>
+        </div>
 	</div>
+ <div id="hidden-profile-content" style="display:none;">
+  [[FREESPACE:1]]
+  </div>
+[[!-- ここまで --]]
 	<p class="Login-Required freespaceedit">
-		<a href="[[FREESPACEEDIT:URL]]" class="Login-Required">編集</a>
+		<a href="[[FREESPACEEDIT:URL]]">編集</a>
 	</p>
 </div>
 
@@ -21,7 +32,7 @@
 	</div>
 </div>
 
-<!-- カテゴリ表示 -->
+[[!-- カテゴリ表示 --]]
 <div class="widget categoryarea">
 	<p class="widget-title">Categories</p>
 	<div class="categoryTree">
@@ -29,13 +40,13 @@
 	</div>
 </div>
 
-<!-- ハッシュタグ表示 -->
+[[!-- ハッシュタグ表示 --]]
 <div class="widget hashtaglistarea">
 	<p class="widget-title">Hashtags</p>
 	[[HASHTAG:LIST]]
 </div>
 
-<!-- 検索表示 -->
+[[!-- 検索表示 --]]
 <div class="widget searcharea">
 	<div id="simplesearch">
 		<p class="widget-title">Search</p>
@@ -55,24 +66,24 @@
 	</div>
 </div>
 
-<!-- 月別表示 -->
+[[!-- 月別表示 --]]
 <div class="widget datelistarea">
 	<p class="widget-title">Archives</p>
 	[[DATEBOX:LIST]]
 </div>
 
-<!-- 月別表示（プルダウン） -->
+[[!-- 月別表示（プルダウン） --]]
 <div class="widget datelistarea-pull">
 	[[DATEBOX:PULL]]
 </div>
 
-<!-- 最近の投稿表示 -->
+[[!-- 最近の投稿表示 --]]
 <div class="widget latestpostarea">
 	<p class="widget-title">Recent Posts</p>
 	[[LATESTLIST]]
 </div>
 
-<!-- 統計表示 -->
+[[!-- 統計表示 --]]
 <div class="widget infowidget">
 	<div class="widget-body">
 		<p class="infotitle">Stats</p>
@@ -82,7 +93,7 @@
 	</div>
 </div>
 
-<!-- ユーティリティ表示 -->
+[[!-- ユーティリティ表示 --]]
 <div class="widget utilitywidget">
 	<div class="widget-body">
 		<ul class="utility-links">

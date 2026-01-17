@@ -57,42 +57,48 @@
 /* Left Side: Date & Category */
 .list-meta {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
-    min-width: 140px;
+    width: 200px;
     flex-shrink: 0;
 }
 .postdate {
-    display: inline;
-    width: auto;
-    margin-bottom: 0;
+    display: inline-block;
+    padding-top: 2px;
     font-size: 0.85rem;
     color: var(--text-muted);
     font-family: 'Poppins', sans-serif;
 }
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
 .categories a {
     font-size: 0.75rem;
-    padding: 2px 6px;
+    padding: 2px 8px;
     background: var(--bg-body);
     border-radius: 4px;
     text-decoration: none;
     color: var(--text-light);
+    line-height: 1.2;
 }
 
 /* Center: Title */
 .logtitle {
     display: block;
     font-weight: 500;
-    line-height: inherit;
+    line-height: 1.4;
     -webkit-line-clamp: unset;
     line-clamp: unset;
     
     flex: 1;
     margin: 0 16px;
+    padding: 4px 0;
     font-size: 1rem;
     overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-all;
 }
 .logtitle a {
     color: var(--text-main);
@@ -129,6 +135,9 @@
     padding: 0 4px;
     border-radius: 4px;
     margin-right: 8px;
+}
+.newsign:empty {
+    display: none;
 }
 
 /* Auth Control: Hide edit buttons when not logged in */

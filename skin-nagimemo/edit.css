@@ -1,0 +1,231 @@
+@charset "utf-8";
+
+/* ==========================================================================
+   NagiMemo Edit Skin Overrides
+   ========================================================================== */
+
+/* 1. Global Reset & Theme Application */
+body {
+    background-color: #f1f5f9 !important; /* var(--bg-body) */
+    font-family: 'Noto Sans JP', 'Poppins', sans-serif !important;
+    color: #334155 !important; /* var(--text-main) */
+    margin: 0 !important;
+}
+
+/* 2. Container Overrides */
+#contents {
+    background-color: transparent !important;
+    border: none !important;
+    max-width: 1000px;
+    margin: 0 auto !important;
+    padding: 20px !important;
+}
+
+/* 3. Header Redesign */
+#header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    color: #334155 !important;
+    padding: 15px 20px !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+    margin-bottom: 20px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#header h1 {
+    font-size: 1.25rem !important;
+    color: #334155 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-weight: 700 !important;
+}
+#header a {
+    color: #334155 !important;
+    text-decoration: none !important;
+}
+
+.adminhome a {
+    position: static !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 5px 12px !important;
+    color: #64748b !important;
+    border-radius: 6px !important;
+    font-size: 0.8rem !important;
+    width: auto !important;
+    display: inline-block !important;
+}
+
+/* 4. Form & Main Area */
+#main {
+    margin: 0 !important;
+}
+
+.postform {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1) !important;
+    margin-bottom: 2rem !important;
+}
+
+.line-postid {
+    background: #f8fafc !important;
+    padding: 10px 15px !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 15px !important;
+    color: #475569 !important;
+}
+.line-postid label {
+    font-weight: 500 !important;
+}
+
+/* Textarea - Fixed resizing issues */
+textarea.tegalogpost {
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    font-size: 16px !important;
+    background-color: #ffffff !important;
+    color: #334155 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    line-height: 1.6 !important;
+    box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05) !important;
+    
+    /* Allow resizing */
+    resize: vertical !important;
+    
+    /* Default height, but allow override by JS (Ctrl+Up/Down) */
+    height: 120px; 
+    min-height: 100px !important; 
+    /* No max-height, no !important on height */
+}
+textarea.tegalogpost:focus {
+    border-color: #2563eb !important; 
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+    outline: none !important;
+}
+
+/* 5. Buttons */
+.postbutton {
+    background-color: #2563eb !important;
+    border: 1px solid #2563eb !important;
+    border-radius: 999px !important;
+    color: #ffffff !important;
+    padding: 10px 30px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3) !important;
+}
+.postbutton:hover {
+    background-color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 10px -2px rgba(37, 99, 235, 0.4) !important;
+}
+
+.decoBtns input[type="button"],
+.decoDoorSYS, .hashDoorSYS, .catDoorSYS, .stateDoorSYS, .funcDoorSYS, .imgUrl, 
+.smallbutton, .btnlink {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #64748b !important;
+    border-radius: 6px !important;
+    font-size: 0.85rem !important;
+    padding: 6px 12px !important;
+    margin: 2px !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+}
+.decoBtns input[type="button"]:hover, .decoDoorSYS:hover, .btnlink:hover {
+    background-color: #e2e8f0 !important;
+    color: #334155 !important;
+    border-color: #94a3b8 !important;
+}
+
+#status, #copyright {
+    color: #94a3b8 !important;
+    font-size: 0.75rem !important;
+    text-align: center !important;
+}
+#copyright a {
+    color: #94a3b8 !important;
+    text-decoration: none !important;
+}
+
+/* 6. Footer Overrides */
+#footer {
+    display: none !important;
+}
+.adminlinks {
+    margin-top: 30px !important;
+    text-align: center !important;
+}
+.adminlinks a {
+    color: #64748b !important;
+    margin: 0 10px !important;
+    font-size: 0.9rem !important;
+}
+
+/* 7. Delete Button */
+.deleteButton {
+    background-color: #fff1f2 !important;
+    color: #e11d48 !important;
+    border: 1px solid #fecdd3 !important;
+}
+.deleteButton:hover {
+    background-color: #ffe4e6 !important;
+    color: #be123c !important;
+}
+
+/* Responsive fixes */
+@media (max-width: 600px) {
+    #contents {
+        padding: 10px !important;
+    }
+    .postform {
+        padding: 15px !important;
+        border-radius: 12px !important;
+    }
+    textarea.tegalogpost {
+        height: 120px;
+    }
+}
+
+/* Custom Footer */
+.nagimemo-edit-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+.edit-tips {
+    background: #fff;
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 99px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.tip-icon {
+    margin-right: 5px;
+}
+/* Twemoji styles */
+img.emoji {
+    height: 1.2em;
+    width: 1.2rem;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.2em;
+}

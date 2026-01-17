@@ -422,15 +422,19 @@ img.emoji {
     gap: var(--spacing-sm);
 }
 
-.user-avatar img {
-    width: 40px;
-    height: 40px;
+/* 投稿ヘッダーのユーザープロフィール画像 */
+.user-profile .usericon {
+    width: 50px !important; /* PCサイズ */
+    height: 50px !important;
     border-radius: 50%;
     object-fit: cover;
 }
-.user-avatar {
-    font-weight: bold;
-    color: var(--primary-color);
+
+@media (max-width: 600px) {
+    .user-profile .usericon {
+        width: 40px !important; /* スマホサイズ */
+        height: 40px !important;
+    }
 }
 
 .user-details {
@@ -609,7 +613,26 @@ img.emoji {
 .categoryarea li a {
     flex-wrap: nowrap;
     white-space: nowrap;
+    
+    /* リストメニュー風の装飾 */
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 4px;
+    border-bottom: 1px dashed var(--border-color);
+    transition: padding-left 0.2s, background-color 0.2s;
 }
+.datelistarea li:last-child a,
+.hashtaglistarea li:last-child a,
+.categoryarea li:last-child a {
+    border-bottom: none;
+}
+.datelistarea li a:hover,
+.hashtaglistarea li a:hover,
+.categoryarea li a:hover {
+    padding-left: 8px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
 /* Recent Posts and others should be allowed to wrap */
 .latestpostarea li a {
     flex-wrap: wrap;
@@ -633,6 +656,34 @@ img.emoji {
     font-family: 'Poppins', sans-serif;
     font-size: 0.8em;
     opacity: 0.6;
+}
+
+/* ナビゲーションメニュー */
+.navigationwidget .utility-links li a {
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 4px;
+    border-bottom: 1px dashed var(--border-color);
+    font-weight: 500;
+    transition: padding-left 0.2s;
+}
+.navigationwidget .utility-links li:last-child a {
+    border-bottom: none;
+}
+.navigationwidget .utility-links li a:hover {
+    padding-left: 8px;
+    background: rgba(0, 0, 0, 0.02);
+}
+/* アーカイブ等の (n) 件数表示を右端に寄せる */
+.datelistarea li a .num,
+.hashtaglistarea li a .num,
+.categoryarea li a .num {
+    margin-left: auto;
+}
+
+.navigationwidget .icon-right {
+    font-size: 18px;
+    color: var(--text-light);
 }
 .widget li a:hover .num {
     opacity: 1;
@@ -920,6 +971,18 @@ img.emoji {
     max-width: var(--content-max-width);
     margin: 0 auto;
     padding: 0 var(--spacing-sm);
+    transition: max-width 0.3s ease;
+}
+
+/* PC Top QuickPost: Textarea だけメインカラム幅に合わせる */
+@media (min-width: 901px) {
+    /* テキストエリアのみ幅を制限 */
+    div.postarea-wrapper:not(.active) textarea.tegalogpost {
+        max-width: calc(var(--content-max-width) - var(--sidebar-width) - var(--spacing-lg) - var(--spacing-sm) * 2);
+        /* 左揃え */
+        margin-right: auto;
+        margin-left: 0;
+    }
 }
 
 textarea.tegalogpost {
@@ -1179,9 +1242,6 @@ video.embeddedmovie {
 /* ---------------------------------------------------
    Multiple Images Grid Layout (2 columns)
    --------------------------------------------------- */
-/* ---------------------------------------------------
-   Multiple Images Grid Layout (2 columns)
-   --------------------------------------------------- */
 /*
    Selector Logic:
    1. ".imagelink:has(+ .imagelink)" targets an image followed by another image.
@@ -1196,10 +1256,17 @@ video.embeddedmovie {
 .single-image {
     display: block;
     width: 100%;
-    max-width: 600px;
     margin: 0 0 12px 0;
     box-sizing: border-box;
     text-align: center;
+}
+
+/* 装飾用クラス: super */
+p.decorationF.deco-super {
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin-bottom: -0.9em;
+    line-height: 1.4;
 }
 .single-image .embeddedimage {
     width: 100%;
@@ -1695,4 +1762,13 @@ ul.decorationL {
     padding: 24px;
     overflow-y: auto;
     overscroll-behavior: contain;
+}
+
+/* プロフィールアイコンのスタイル調整 */
+#profile-modal .modal-body img {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
 }

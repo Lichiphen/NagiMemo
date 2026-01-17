@@ -12,79 +12,80 @@
 <html lang="ja">
 
 <head>
-	[[FAVICON]]
-	<meta http-equiv="Content-Type" content="text/html; charset=[[CHARCODE]]">
-	<title>[[SITUATION:TITLE]] [[FREE:TITLE:MAIN]] [[FREE:TITLE:SUB]]</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="alternate" type="application/rss+xml" title="[[FREE:TITLE:MAIN]]RSSフィード" href="[[RSS:URL:PURE:FULL]]">
+ [[FAVICON]]
+ <meta http-equiv="Content-Type" content="text/html; charset=[[CHARCODE]]">
+ <title>[[SITUATION:TITLE]] [[FREE:TITLE:MAIN]] [[FREE:TITLE:SUB]]</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ [[INCLUDE:skin-nagimemo/modules/noindex.html]]
+ <link rel="alternate" type="application/rss+xml" title="[[FREE:TITLE:MAIN]]RSSフィード" href="[[RSS:URL:PURE:FULL]]">
 
-	<!-- Google Fonts & Icons -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link
-		href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600&display=swap"
-		rel="stylesheet">
-	<link rel="stylesheet"
-		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-	<!-- NagiMemo共通スタイル + Picts固有スタイル -->
-	<link rel="stylesheet" href="../skin-nagimemo/main.css?2026/01/15v2">
-	<link rel="stylesheet" href="picts-style.css">
-	[[OGP]]
+ [[!-- Google Fonts & Icons --]]
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link
+  href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Poppins:wght@400;600&display=swap"
+  rel="stylesheet">
+ <link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+ [[!-- NagiMemo共通スタイル + Picts固有スタイル --]]
+ <link rel="stylesheet" href="../skin-nagimemo/main.css?2026/01/15v2">
+ <link rel="stylesheet" href="picts-style.css">
+ [[OGP]]
 </head>
 
 <body class="[[SITUATION:CLASS]] loggedin-[[SYS:ISLOGGEDIN]] picts-mode">
 
-	<header class="site-header">
-		<div class="header-inner">
-			<div class="headtitle">
-				<h1 class="maintitle">
-					<a href="[[HOME:URL]]">
-						[[FREE:TITLE:MAIN]]
-						<small class="subtitle">[[FREE:TITLE:SUB]]</small>
-					</a>
-				</h1>
-				<div class="mainguide">
-					[[FREE:DESCRIPTION]]
-				</div>
-			</div>
-			<nav class="header-nav"></nav>
-		</div>
-	</header>
+ <header class="site-header">
+  <div class="header-inner">
+   <div class="headtitle">
+    <h1 class="maintitle">
+     <a href="[[HOME:URL]]">
+      [[FREE:TITLE:MAIN]]
+      <small class="subtitle">[[FREE:TITLE:SUB]]</small>
+     </a>
+    </h1>
+    <div class="mainguide">
+     [[FREE:DESCRIPTION]]
+    </div>
+   </div>
+   <nav class="header-nav"></nav>
+  </div>
+ </header>
 
-	<div class="contents">
+ <div class="contents">
 
-		<main class="mainarea full-width">
-			[[SITUATION:HTML]]
-			<div class="tegalog-feed picts-grid">
-				[[TEGALOG]]
-			</div>
+  <main class="mainarea full-width">
+   [[SITUATION:HTML]]
+   <div class="tegalog-feed picts-grid">
+    [[TEGALOG]]
+   </div>
 
-			<div class="pagenavi">
-				<p class="pagelinks">[[NAVI:PREVNEXT]]</p>
-				<p class="pagenums">[[NAVI:PAGELIST]]</p>
-				<p class="pagehome">[[NAVI:TOPPAGE]]</p>
-			</div>
-		</main>
+   <div class="pagenavi">
+    <p class="pagelinks">[[NAVI:PREVNEXT]]</p>
+    <p class="pagenums">[[NAVI:PAGELIST]]</p>
+    <p class="pagehome">[[NAVI:TOPPAGE]]</p>
+   </div>
+  </main>
 
-		<!-- サイドバーなし (1カラム) -->
+  [[!-- サイドバーなし (1カラム) --]]
 
-	</div>
+ </div>
 
-	[[INCLUDE:skin-nagimemo/modules/footer.html]]
-	
-	[[JS:LIGHTBOX:JQ]]
-	<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
-	<script>
-		// Simple script mainly for twemoji
-		(function () {
-			if (typeof twemoji !== 'undefined') {
-				twemoji.parse(document.body);
-			}
-			setTimeout(function () {
-				document.body.classList.add('animations-ready');
-			}, 100);
-		})();
-	</script>
+ [[INCLUDE:skin-nagimemo/modules/footer.html]]
+
+ [[JS:LIGHTBOX:JQ]]
+ <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
+ <script>
+  // Simple script mainly for twemoji
+  (function () {
+   if (typeof twemoji !== 'undefined') {
+    twemoji.parse(document.body);
+   }
+   setTimeout(function () {
+    document.body.classList.add('animations-ready');
+   }, 100);
+  })();
+ </script>
 </body>
 
 </html>

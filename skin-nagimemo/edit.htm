@@ -1,0 +1,23 @@
+<!-- NagiMemo Edit Customizer -->
+<link rel="stylesheet" href="skin-nagimemo/edit.css?v=20260117-04">
+
+<!-- Twemoji Support -->
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
+<script>
+window.addEventListener('load', function() {
+    if(typeof twemoji !== 'undefined') {
+        twemoji.parse(document.body);
+    }
+});
+</script>
+
+<script src="skin-nagimemo/drag-drop-upload.js"></script>
+<script src="skin-nagimemo/edit.js?v=20260117-04"></script>
+
+<!-- Custom UI Elements (Inserted below the form) -->
+<div class="nagimemo-edit-footer">
+    <p class="edit-tips">
+        <span class="tip-icon">💡</span> 
+        ドラッグ＆ドロップで画像をアップロードできます。Ctrl+Vでクリップボードの画像を貼り付けられます。
+    </p>
+</div>

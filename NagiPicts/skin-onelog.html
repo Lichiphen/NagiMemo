@@ -1,25 +1,16 @@
 
-<!-- ▼1投稿ごとのボックス(ギャラリーモード) -->
+[[!-- ▼1投稿ごとのボックス(ギャラリーモード) --]]
 <div class="onelogbox [[POSTSTATUS]]" id="pos[[LOOPCOUNT]]"> 
 	
 	<div class="image-container">
-		<a href="[[ONEPICT:1:VALUE:SRC]]" title="[[COMMENT:TITLE:TEXT]]" data-lightbox="lightbox" [[ATT:LIGHTBOX]]>
-			<!-- 1枚目の画像を表示 (画像がない場合は何も表示されない) -->
+		<a href="[[ONEPICT:1:VALUE:SRC]]" title="[[COMMENT:TITLE]]" data-lightbox="lightbox" [[ATT:LIGHTBOX]]>
+			[[!-- 1枚目の画像を表示 (画像がない場合は何も表示されない) --]]
 			[[ONEPICT:1:IMG]]
 		</a>
 	</div>
 
-	<p class="logtitle">
-		<a href="[[PERMAURL:PURE]]">[[COMMENT:TITLE:40]]</a>
-	</p>
-	
 	<div class="loginfo">
 		<span class="postdate">[[DATE:Y/G/N]]</span>
-		
-		<span class="edit-links">
-			<a href="[[EDITURL]]" title="編集">✎</a>
-			<a href="[[DELETEURL]]" title="削除">✕</a>
-		</span>
 	</div>
 
 </div>

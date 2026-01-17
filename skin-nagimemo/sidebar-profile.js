@@ -8,7 +8,8 @@
     function initProfileModal() {
         // プロフィールリンクにイベントリスナー設定
         document.addEventListener('click', function(e) {
-            if (e.target && e.target.classList.contains('linkbtn_profile')) {
+            var target = e.target.closest('.linkbtn_profile');
+            if (target) {
                 e.preventDefault();
                 openProfileModal();
             }

@@ -1144,12 +1144,32 @@ textarea.tegalogpost:focus {
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
+/* Base style for Search Box (Simple & Complex) */
+.searchbox .searchinputs,
+.complexsearch .searchbox {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.searcharea .queryinput {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.searcharea .submitbutton {
+    width: auto !important;
+    padding: 8px 16px !important;
+    white-space: nowrap;
+}
+
 /* Containers shouldn't have background/border */
 .datelimitbox, .submitcover {
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    display: inline-flex !important; /* For PC flex layout */
 }
 
 /* Search input and regular inputs shouldn't have the arrow */
@@ -1212,21 +1232,19 @@ textarea.tegalogpost:focus {
 
 /* Media Query for Mobile Complex Search */
 @media (max-width: 600px) {
+    .searchbox .searchinputs,
     #complexsearch .complexsearch .searchbox {
-        display: flex;
         flex-direction: column; /* Stack input and button on mobile */
-        gap: 8px;
+        align-items: stretch;
     }
-    #complexsearch .queryinput {
+    .searcharea .queryinput {
         width: 100% !important;
-        margin-bottom: 0 !important;
     }
-    #complexsearch .submitbutton {
+    .searcharea .submitbutton {
         width: 100% !important; /* Full width button on mobile */
         padding: 10px !important;
     }
     #complexsearch .submitcover {
-        width: 100% !important;
         display: block !important;
     }
 }

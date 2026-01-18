@@ -234,8 +234,136 @@
         });
     }
 
+    // Helper: Remove immediate sibling <br> (Tegalog extra spacing fix)
+    function removeNextBr(element) {
+        var next = element.nextSibling;
+        if (next && next.nodeName === 'BR') {
+            next.parentNode.removeChild(next);
+        } else if (next && next.nodeType === 3 && next.textContent.trim() === '') {
+            var nextNext = next.nextSibling;
+            if (nextNext && nextNext.nodeName === 'BR') {
+                nextNext.parentNode.removeChild(nextNext);
+            }
+        }
+    }
+
+    // =========================================================
+    // Code Block Copy Button
+    // =========================================================
+    function initCodeCopyButtons() {
+        var codeBlocks = document.querySelectorAll('code.decoration1');
+
+        codeBlocks.forEach(function(codeEl) {
+            // Skip if already wrapped
+            if (codeEl.parentNode.classList && codeEl.parentNode.classList.contains('code-block-wrapper')) return;
+
+            // Wrap the code element
+            var wrapper = document.createElement('div');
+            wrapper.className = 'code-block-wrapper';
+            codeEl.parentNode.insertBefore(wrapper, codeEl);
+            wrapper.appendChild(codeEl);
+
+            // Create copy button
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'code-copy-btn';
+            copyBtn.textContent = 'コピー';
+            copyBtn.type = 'button';
+            wrapper.appendChild(copyBtn);
+
+            // Remove immediate sibling <br>
+            removeNextBr(wrapper);
+
+            // Click handler
+            copyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Copy to clipboard
+                var text = codeEl.textContent || codeEl.innerText || '';
+                navigator.clipboard.writeText(text).then(function() {
+                    showCopyToast(e.clientX, e.clientY, 'コピー完了');
+                }).catch(function(err) {
+                    // Fallback for older browsers
+                    var ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.cssText = 'position:fixed;opacity:0;';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try {
+                        document.execCommand('copy');
+                        showCopyToast(e.clientX, e.clientY, 'コピー完了');
+                    } catch (err2) {
+                        showCopyToast(e.clientX, e.clientY, 'コピー失敗', true);
+                    }
+                    document.body.removeChild(ta);
+                });
+            });
+        });
+    }
+
+    function showCopyToast(x, y, message, isError) {
+        var toast = document.createElement('div');
+        toast.className = 'copy-toast';
+        toast.textContent = message;
+        if (isError) {
+            toast.style.background = '#ef4444';
+        }
+        toast.style.left = x + 'px';
+        toast.style.top = y + 'px';
+        document.body.appendChild(toast);
+
+        // Remove after animation
+        setTimeout(function() {
+            toast.remove();
+        }, 1500);
+    }
+
+    function cleanupDecorations() {
+        // Cleanup for ul.decorationL
+        var lists = document.querySelectorAll('ul.decorationL');
+        lists.forEach(function(list) {
+            removeNextBr(list);
+        });
+
+        // Cleanup for p.decorationF
+        var bubbles = document.querySelectorAll('p.decorationF');
+        bubbles.forEach(function(bubble) {
+            var node1 = bubble.nextSibling;
+            
+            // Pattern 1: [Bubble] -> [BR] -> [Not BR]
+            if (node1 && node1.nodeName === 'BR') {
+                var node2 = node1.nextSibling;
+                
+                // If there's an empty text node between BRs, skip it to check the next real node
+                if (node2 && node2.nodeType === 3 && node2.textContent.trim() === '') {
+                    node2 = node2.nextSibling;
+                }
+
+                // If the second node is NOT a BR, it means it's a single return. Remove it.
+                if (node2 && node2.nodeName !== 'BR') {
+                    node1.parentNode.removeChild(node1);
+                }
+            } 
+            // Pattern 2: [Bubble] -> [Whitespace] -> [BR] -> [Not BR]
+            else if (node1 && node1.nodeType === 3 && node1.textContent.trim() === '') {
+                var node2 = node1.nextSibling;
+                if (node2 && node2.nodeName === 'BR') {
+                    var node3 = node2.nextSibling;
+                    if (node3 && node3.nodeType === 3 && node3.textContent.trim() === '') {
+                        node3 = node3.nextSibling;
+                    }
+                    if (node3 && node3.nodeName !== 'BR') {
+                        node2.parentNode.removeChild(node2);
+                    }
+                }
+            }
+        });
+    }
+
     // Run format
     formatImageGrid();
     disableAutocomplete();
+    initCodeCopyButtons();
+    cleanupDecorations();
     // Re-run on resize? Not needed for logic, only CSS handles resize.
 })();

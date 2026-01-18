@@ -178,15 +178,31 @@
     // Global drag handlers
     var dragCount = 0;
     
+    // Helper: Check if the drag event contains files (not just text)
+    function containsFiles(e) {
+        if (e.dataTransfer && e.dataTransfer.types) {
+            // 'Files' indicates actual files are being dragged
+            for (var i = 0; i < e.dataTransfer.types.length; i++) {
+                if (e.dataTransfer.types[i] === 'Files') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     document.addEventListener('dragenter', function(e) {
         e.preventDefault();
+        // Only show overlay if files are being dragged (not text selection)
+        if (!containsFiles(e)) return;
+        
         dragCount++;
         if (dragCount === 1) show();
     }, true);
     
     document.addEventListener('dragleave', function(e) {
         e.preventDefault();
-        dragCount--;
+        if (dragCount > 0) dragCount--;
         if (dragCount === 0) hide();
     }, true);
     
@@ -221,5 +237,5 @@
     // Expose clear function globally for manual reset
     window.NagiMemoDropClear = clearFiles;
 
-    console.log('NagiMemo: Drag-drop v7 (累積モード + Ctrl+V貼り付け)');
+    console.log('NagiMemo: Drag-drop v8 (ファイル判定強化 + 累積モード + Ctrl+V貼り付け)');
 })();

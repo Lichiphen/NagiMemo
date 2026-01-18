@@ -20,11 +20,23 @@
 /* Grid Container */
 .picts-grid {
     display: grid;
-    /* Responsive Grid: Adjust minmax for card size preference */
+    /* Responsive Grid: Default (PC/Tablet) filling based on min-width */
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
     width: 100%;
 }
+
+/* Force 2 columns on all smaller mobile devices */
+@media (max-width: 480px) {
+    .picts-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px; /* Slimmer gaps for small screens */
+    }
+    .onelogbox {
+        padding: 8px; /* Slightly smaller padding to maximize image area */
+    }
+}
+
 
 /* Card Style (Square) */
 .onelogbox {

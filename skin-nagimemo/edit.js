@@ -25,6 +25,12 @@
         if (btn.value === '画像') btn.value = '📷 画像';
         if (btn.value === '装飾') btn.value = '✨ 装飾';
     });
+    
+    // Disable Autocomplete for all text/search inputs
+    var textInputs = document.querySelectorAll('input[type="text"], input[type="search"]');
+    textInputs.forEach(function(input) {
+        input.setAttribute('autocomplete', 'off');
+    });
 
     console.log('Nagimemo Edit: Loaded');
 })();

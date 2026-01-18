@@ -226,7 +226,16 @@
         });
     }
 
+    // Disable Autocomplete for all text/search inputs
+    function disableAutocomplete() {
+        var inputs = document.querySelectorAll('input[type="text"], input[type="search"]');
+        inputs.forEach(function(input) {
+            input.setAttribute('autocomplete', 'off');
+        });
+    }
+
     // Run format
     formatImageGrid();
+    disableAutocomplete();
     // Re-run on resize? Not needed for logic, only CSS handles resize.
 })();

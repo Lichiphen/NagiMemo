@@ -1187,6 +1187,13 @@ textarea.tegalogpost:focus {
 }
 
 /* Complex Search Layout Fix */
+#complexsearch .complexsearch {
+    width: 100%;
+}
+#complexsearch .queryinput {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
 #complexsearch .searchoptions {
     list-style: none;
     padding: 0;
@@ -1207,15 +1214,20 @@ textarea.tegalogpost:focus {
 @media (max-width: 600px) {
     #complexsearch .complexsearch .searchbox {
         display: flex;
+        flex-direction: column; /* Stack input and button on mobile */
         gap: 8px;
     }
     #complexsearch .queryinput {
-        flex: 1;
+        width: 100% !important;
         margin-bottom: 0 !important;
     }
     #complexsearch .submitbutton {
-        width: auto !important;
-        white-space: nowrap;
+        width: 100% !important; /* Full width button on mobile */
+        padding: 10px !important;
+    }
+    #complexsearch .submitcover {
+        width: 100% !important;
+        display: block !important;
     }
 }
 

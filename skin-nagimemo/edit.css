@@ -229,3 +229,39 @@ img.emoji {
     margin: 0 .05em 0 .1em;
     vertical-align: -0.2em;
 }
+/* 8. Hashtag Easy Input Select Styling */
+.hashtagEasyInput {
+    padding: 8px 32px 8px 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    font-family: inherit !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    margin-right: 8px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    
+    /* Reset default browser arrow */
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    
+    /* Custom SVG Arrow */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20'%3E%3Cpath fill='%2364748b' d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 8px center !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+}
+
+.hashtagEasyInput:hover {
+    border-color: #2563eb !important;
+    background-color: #f8fafc !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.hashtagEasyInput:focus {
+    outline: none !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1), 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}

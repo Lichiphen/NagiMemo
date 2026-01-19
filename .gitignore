@@ -1,0 +1,11 @@
+# NagiMemo Local Gitignore
+
+# エージェント設定およびワークフローを独立リポジトリから除外
+.agent/
+.agent/workflows/
+_doc/
+
+# OSファイル
+.DS_Store
+Thumbs.db
+desktop.ini

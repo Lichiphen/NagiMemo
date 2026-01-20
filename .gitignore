@@ -4,6 +4,7 @@
 .agent/
 .agent/workflows/
 _doc/
+_Release/
 
 # OSファイル
 .DS_Store

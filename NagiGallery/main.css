@@ -476,3 +476,34 @@ footer {
     padding-top:0.5em;
     font-size:0.75rem;
 }
+
+/* ==========================================================================
+   Gallery Support (Lock Status)
+   ========================================================================== */
+.onelogbox.logstatus-lock .imagebox {
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.onelogbox.logstatus-lock .imagebox::after {
+    content: 'lock'; /* Material Icon Name */
+    font-family: 'Material Symbols Rounded';
+    font-size: 48px;
+    color: var(--text-light);
+    opacity: 0.5;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.onelogbox.logstatus-lock:hover .imagebox::after {
+    transform: scale(1.1);
+    color: var(--primary-color);
+    opacity: 0.8;
+}
+
+/* Dim the text slightly for locked posts in gallery */
+.onelogbox.logstatus-lock .onelogtext {
+    opacity: 0.7;
+}

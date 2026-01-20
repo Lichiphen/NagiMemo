@@ -1,6 +1,6 @@
 # NagiMemo
 
-書くのが楽しくなる、てがろぐのスキンファイル群です。（てがろぐ V4.7.0 以降対応）
+書くのが楽しくなる、てがろぐのスキンファイル群です。（てがろぐ Ver4.7.4 対応）
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-NagiMemo-181717?logo=github)](https://github.com/Lichiphen/NagiMemo/)

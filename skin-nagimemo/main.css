@@ -1543,6 +1543,18 @@ footer {
 /* YouTube Responsive (only for YouTube iframes) */
 article iframe[src*="youtube"],
 article iframe[src*="youtu.be"],
+video.embeddedmovie,
+.embeddedmovie,
+.embeddedmusic,
+.embeddedspotify,
+.embeddedapplemusic,
+.cardlinkbox {
+    margin: 10px 0;
+    display: block; /* Ensure margins work on span/inline elements */
+}
+
+article iframe[src*="youtube"],
+article iframe[src*="youtu.be"],
 video.embeddedmovie {
     max-width: 100% !important;
     width: 100% !important;
@@ -1558,8 +1570,10 @@ article iframe.instagram-media {
     max-width: 100% !important;
     width: 100% !important;
     min-width: unset !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin: 12px auto !important;
+    border: none !important; /* Force remove border */
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.12), 0 0 20px rgba(0,0,0,0.05) !important; /* Fluffy shadow */
 }
 
 /* ---------------------------------------------------
@@ -2277,4 +2291,43 @@ ul.decorationL {
         width: auto;
         white-space: nowrap;
     }
+}
+
+/* ==========================================================================
+   Tegalog v4.7.4 Beta Support
+   ========================================================================== */
+/* Recent Image Selection Buttons in QUICKPOST */
+.recentimginsertbtns {
+    margin: var(--spacing-xs) 0;
+    padding: 8px;
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.recentimginsert {
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.recentimginsert:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--primary-color);
+}
+
+.recentimginsert img {
+    display: block;
+    width: 60px; /* Custom size for NagiMemo */
+    height: 60px;
+    object-fit: cover;
 }

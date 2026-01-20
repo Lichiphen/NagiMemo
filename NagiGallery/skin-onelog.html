@@ -1,43 +1,30 @@
-<!-- 
-=============================================================
- * ![NagiGallery Skin]
- * 
- * NagiGallery v1.0.0
- * Copyright (c) 2026 Lichiphen
- * Licensed under the MIT License
- * https://gitlab.com/lichiphen/nagimemo/-/blob/main/LICENSE
- * ==========================================================
- */-->
-<!-- ▼1投稿ごとのボックス (Gallery Style) -->
 <article class="onelogbox [[POSTSTATUS]]" id="pos[[LOOPCOUNT]]">
     
-    <!-- Link to full post (Covers the whole card via CSS) -->
+    [[!-- Link to full post (Covers the whole card via CSS) --]]
     <a href="[[PERMAURL:PURE]]" class="card-link-overlay"></a>
 
-    <!-- Image Area (Square Crop) -->
+    [[!-- Image Area (Square Crop) --]]
     <div class="imagebox">
-        <!-- 
+        [[!-- 
            [[ONEPICT:1]] displays only the 1st image.
            CSS handles object-fit: cover for the square ratio.
-        -->
+        --]]
         [[ONEPICT:1]]
     </div>
 
-    <!-- Meta / Caption Area -->
+    [[!-- Meta / Caption Area --]]
     <div class="post-meta">
         <div class="post-meta-top">
             <span class="post-date">[[DATE:Y/M/D]]</span>
             <div class="onelogtext">
-                <!-- Shortened comment title/excerpt -->
+                [[!-- Shortened comment title/excerpt --]]
                 [[COMMENT:TITLE:45]]
             </div>
         </div>
         
         <div class="post-tags">
-             <!-- Tags only, no categories for cleaner look (or add back if needed) -->
              [[CATEGORYLINKS:FULL]]
              <span class="pictcount">([[PICTCOUNT]])</span>
         </div>
     </div>
-
 </article>

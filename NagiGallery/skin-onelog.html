@@ -1,0 +1,30 @@
+<article class="onelogbox [[POSTSTATUS]]" id="pos[[LOOPCOUNT]]">
+    
+    [[!-- Link to full post (Covers the whole card via CSS) --]]
+    <a href="[[PERMAURL:PURE]]" class="card-link-overlay"></a>
+
+    [[!-- Image Area (Square Crop) --]]
+    <div class="imagebox">
+        [[!-- 
+           [[ONEPICT:1]] displays only the 1st image.
+           CSS handles object-fit: cover for the square ratio.
+        --]]
+        [[ONEPICT:1]]
+    </div>
+
+    [[!-- Meta / Caption Area --]]
+    <div class="post-meta">
+        <div class="post-meta-top">
+            <span class="post-date">[[DATE:Y/M/D]]</span>
+            <div class="onelogtext">
+                [[!-- Shortened comment title/excerpt --]]
+                [[COMMENT:TITLE:45]]
+            </div>
+        </div>
+        
+        <div class="post-tags">
+             [[CATEGORYLINKS:FULL]]
+             <span class="pictcount">([[PICTCOUNT]])</span>
+        </div>
+    </div>
+</article>

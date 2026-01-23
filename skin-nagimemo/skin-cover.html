@@ -1,0 +1,148 @@
+﻿[[INCLUDE:FROM-THIS-SKIN-DIR:modules/copyright.html]]
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	[[FAVICON]]
+	<meta http-equiv="Content-Type" content="text/html; charset=[[CHARCODE]]">
+	<title>[[SITUATION:TITLE]] [[FREE:TITLE:MAIN]] [[FREE:TITLE:SUB]]</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	[[INCLUDE:FROM-THIS-SKIN-DIR:modules/noindex.html]]
+	<link rel="alternate" type="application/rss+xml" title="[[FREE:TITLE:MAIN]]RSSフィード" href="[[RSS:URL:PURE:FULL]]">
+
+	[[!-- Google Fonts & Icons --]]
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700&family=Poppins:wght@400;600&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+			[[!-- NagiMemo共通スタイル (ベース) --]]
+	<link rel="stylesheet" href="main.css?20260124v2">
+	[[OGP]]
+</head>
+
+<body class="[[SITUATION:CLASS]] loggedin-[[SYS:ISLOGGEDIN]]">
+
+	<header class="site-header">
+		<div class="header-inner">
+			<div class="headtitle">
+				<h1 class="maintitle">
+					<a href="[[HOME:URL]]">
+						[[FREE:TITLE:MAIN]]
+						<small class="subtitle">[[FREE:TITLE:SUB]]</small>
+					</a>
+				</h1>
+				<div class="mainguide">
+					[[FREE:DESCRIPTION]]
+					[[FREESPACE:1]]
+				</div>
+			</div>
+			<nav class="header-nav"></nav>
+		</div>
+	</header>
+
+	<div class="postarea-wrapper loggedin-[[SYS:ISLOGGEDIN]]">
+		<div class="postarea">
+			[[QUICKPOST]]
+		</div>
+	</div>
+
+	<div class="contents">
+
+		<main class="mainarea">
+			[[SITUATION:HTML]]
+			<div class="tegalog-feed">
+				[[TEGALOG]]
+			</div>
+
+			<div class="pagenavi">
+				<p class="pagelinks">[[NAVI:PREVNEXT]]</p>
+				<p class="pagenums">[[NAVI:PAGELIST]]</p>
+				<p class="pagehome">[[NAVI:TOPPAGE]]</p>
+			</div>
+		</main>
+
+		<aside class="subarea" id="sidebar">
+			<div class="sidebar-header-mobile">
+				<span class="sidebar-title">MENU</span>
+				<button class="close-sidebar" type="button" aria-label="Close Sidebar">
+					<span class="material-symbols-rounded">close</span>
+				</button>
+			</div>
+
+			<div class="subarea-content">
+				[[INCLUDE:FROM-THIS-SKIN-DIR:modules/sidebar.html]]
+			</div>
+		</aside>
+
+	</div>
+
+	[[INCLUDE:FROM-THIS-SKIN-DIR:modules/footer.html]]
+
+	<div id="sidebar-overlay"></div>
+	<div id="post-overlay"></div>
+
+	<button id="fab-post" class="loggedin-[[SYS:ISLOGGEDIN]]" type="button" aria-label="Toggle Post Area">
+		<span class="material-symbols-rounded">edit</span>
+		<span class="fab-text">書く</span>
+	</button>
+
+	<button id="fab-menu" type="button" aria-label="Open Menu">
+		<span class="material-symbols-rounded">menu</span>
+	</button>
+
+	[[!-- Twemoji CDN 利用のためライセンス表記免除 --]]
+	<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
+
+	<script src="skin-nagimemo/drag-drop-upload.js?2026012110"></script>
+	<script src="skin-nagimemo/sidebar-profile.js?2026012110"></script>
+	<script src="skin-nagimemo/common-ui.js?2026012203"></script>
+	[[JS:LIGHTBOX:JQ]]
+
+	[[!-- ログイン時のみ、QUICKPOSTサムネイルでのNagiSwipe発火を抑制するJSを読み込む --]]
+	<script>
+	window.addEventListener('DOMContentLoaded', () => {
+		if (document.body.classList.contains('loggedin-YES')) {
+			const script = document.createElement('script');
+			script.src = '[[PATH:SKINDIR]]quickpost-exclude.js?20260122';
+			script.defer = true;
+			document.head.appendChild(script);
+		}
+	});
+	</script>
+	[[!-- Share & Credits UI --]]
+    <div id="toast">
+        <div class="toast-content">Copied!</div>
+    </div>
+
+    <div id="credit-modal">
+        <div class="modal-box">
+            <h3>LICENSE / CREDITS</h3>
+            <div class="modal-content-list">
+                <div>
+                    <p class="label">Icons</p>
+                    <p>Icons by Font Awesome (© Fonticons, Inc.)<br>
+                    Licensed under <a href="https://fontawesome.com/license/free" target="_blank" rel="noopener">CC BY 4.0</a><br>
+                    <a href="https://fontawesome.com" target="_blank" rel="noopener">https://fontawesome.com</a></p>
+                </div>
+                <div>
+                    <p class="label">Software</p>
+                    <p>Licensed under the MIT License<br>
+                    Copyright © 2026 Lichiphen</p>
+                </div>
+            </div>
+            <button id="modal-close" class="modal-close-btn">Close</button>
+        </div>
+    </div>
+
+    <textarea id="tempInput" style="position:absolute; left:-9999px; opacity:0; pointer-events:none;" aria-hidden="true"></textarea>
+
+    <script src="skin-nagimemo/share.js?20260124v2"></script>
+</body>
+
+</html>
+

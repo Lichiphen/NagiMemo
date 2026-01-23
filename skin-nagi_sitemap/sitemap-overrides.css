@@ -1,0 +1,177 @@
+@charset "utf-8";
+
+/* =================================================================
+   Sitemap Specific Overrides
+   This file only contains styles specific to the sitemap skin.
+   Base styles are loaded from ../skin-nagimemo/main.css
+
+   Root Variables & Theme
+   ![NagiMemo Skin]
+   
+   NagiMemo v1.0.0
+   Copyright (c) 2026 Lichiphen
+   Licensed under the MIT License
+   https://gitlab.com/lichiphen/nagimemo/-/blob/main/LICENSE
+ */
+
+
+/* Remove Grid, Use Block/List */
+.sitemap-grid {
+    display: block; /* Vertical stacking */
+    padding: 0;
+}
+
+/* List Item Style */
+.onelogbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    transition: background-color 0.2s, padding-left 0.2s;
+    position: relative;
+    /* Reset Card Styles */
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+/* Hover Effect: Blog Link Style */
+.onelogbox:hover {
+    background-color: var(--bg-body);
+    padding-left: 24px; /* Slide effect */
+    transform: none; /* Disable card lift */
+}
+
+/* First/Last borders */
+.onelogbox:first-child { border-top: 1px solid var(--border-color); }
+.onelogbox:last-child { border-bottom: 1px solid var(--border-color); }
+
+
+/* ==========================================================================
+   Internal Elements (List View)
+   ========================================================================== */
+
+/* Left Side: Date & Category */
+.list-meta {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 200px;
+    flex-shrink: 0;
+}
+.postdate {
+    display: inline-block;
+    padding-top: 2px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: 'Poppins', sans-serif;
+}
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.categories a {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    background: var(--bg-body);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text-light);
+    line-height: 1.2;
+}
+
+/* Center: Title */
+.logtitle {
+    display: block;
+    font-weight: 500;
+    line-height: 1.4;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    
+    flex: 1;
+    margin: 0 16px;
+    padding: 4px 0;
+    font-size: 1rem;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-all;
+}
+.logtitle a {
+    color: var(--text-main);
+    display: block;
+}
+.logtitle a:hover {
+    color: var(--primary-color);
+}
+
+/* Right Side: Edit Buttons */
+.edit-links {
+    display: flex;
+    gap: 8px;
+    opacity: 0.2;
+    transition: opacity 0.2s;
+}
+.onelogbox:hover .edit-links {
+    opacity: 1;
+}
+.edit-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+.edit-links a:hover {
+    color: var(--primary-color);
+}
+
+/* New Sign */
+.newsign {
+    font-size: 0.7rem;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 0 4px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+.newsign:empty {
+    display: none;
+}
+
+/* Auth Control: Hide edit buttons when not logged in */
+body.loggedin-NO .edit-links,
+body.loggedin-NO .edit-btn,
+body.loggedin-NO a[href*="mode=edit"],
+body.loggedin-NO a[href*="mode=delete"] {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 600px) {
+    .onelogbox {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 16px;
+    }
+    .onelogbox:hover {
+        padding-left: 16px;
+    }
+    .list-meta {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+    .logtitle {
+        margin: 0;
+        width: 100%;
+        white-space: normal;
+    }
+    .edit-links {
+        margin-top: 8px;
+        align-self: flex-end;
+    }
+}

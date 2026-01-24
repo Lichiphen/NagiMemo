@@ -20,7 +20,7 @@
  <link rel="stylesheet"
   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
  [[!-- NagiMemo共通スタイル + Picts固有スタイル --]]
- <link rel="stylesheet" href="../skin-nagimemo/main.css?2026012110">
+ <link rel="stylesheet" href="../skin-nagimemo/main.css?20260124v3">
  <link rel="stylesheet" href="picts-style.css?2026012110">
  [[OGP]]
 </head>
@@ -66,18 +66,9 @@
  [[INCLUDE:skin-nagimemo/modules/footer.html]]
 
  [[JS:LIGHTBOX:JQ]]
- <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
- <script>
-  // Simple script mainly for twemoji
-  (function () {
-   if (typeof twemoji !== 'undefined') {
-    twemoji.parse(document.body);
-   }
-   setTimeout(function () {
-    document.body.classList.add('animations-ready');
-   }, 100);
-  })();
- </script>
+
+ [[INCLUDE:skin-nagimemo/modules/credits-modal.html]]
+ <script src="[[PATH:SKINDIR]]../skin-nagimemo/share.js?20260124v3"></script>
 </body>
 
 </html>

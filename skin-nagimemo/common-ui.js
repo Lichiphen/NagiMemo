@@ -15,7 +15,7 @@
         if (sidebar) sidebar.classList.add('active');
         if (sidebarOverlay) sidebarOverlay.classList.add('active');
         if (fabMenu) {
-            fabMenu.querySelector('span').textContent = 'close';
+            // fabMenu.querySelector('span').textContent = 'close';
             fabMenu.classList.add('active');
         }
     }
@@ -24,7 +24,7 @@
         if (sidebar) sidebar.classList.remove('active');
         if (sidebarOverlay) sidebarOverlay.classList.remove('active');
         if (fabMenu) {
-            fabMenu.querySelector('span').textContent = 'menu';
+            // fabMenu.querySelector('span').textContent = 'menu';
             fabMenu.classList.remove('active');
         }
     }
@@ -34,7 +34,7 @@
         if (postArea) postArea.classList.add('active');
         if (postOverlay) postOverlay.classList.add('active');
         if (fabPost) {
-            fabPost.querySelector('span').textContent = 'close';
+            // fabPost.querySelector('span').textContent = 'close';
             fabPost.classList.add('active');
         }
     }
@@ -43,7 +43,7 @@
         if (postArea) postArea.classList.remove('active');
         if (postOverlay) postOverlay.classList.remove('active');
         if (fabPost) {
-            fabPost.querySelector('span').textContent = 'edit';
+            // fabPost.querySelector('span').textContent = 'edit';
             fabPost.classList.remove('active');
         }
     }
@@ -292,7 +292,7 @@
             // Create copy button
             var copyBtn = document.createElement('button');
             copyBtn.className = 'code-copy-btn';
-            copyBtn.textContent = 'コピー';
+            copyBtn.innerHTML = '<svg viewBox="0 0 448 512"><path d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16h140.1L432 147.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V147.9c0-12.7-5.1-24.9-14.1-33.9L333.9 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"></path></svg> <span>コピー</span>';
             copyBtn.type = 'button';
             wrapper.appendChild(copyBtn);
 

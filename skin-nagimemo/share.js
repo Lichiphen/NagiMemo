@@ -50,25 +50,44 @@
         if (xBtn) {
             e.preventDefault();
             const path = xBtn.getAttribute('data-url') || '';
-            // Ensure absolute URL
             const absoluteUrl = new URL(path, document.baseURI).href;
-            const title = getPostTitle(xBtn);
+            const title = getPostTitle(xBtn) || 'Check this out!';
             
-            // Detect X app in-app browser (only "Twitter" to avoid false match with "Mac OS X")
-            const isXInAppBrowser = /Twitter/i.test(navigator.userAgent);
-            
-            // Always use newline for clean formatting
-            const finalText = (title || 'Check this out!') + '\n';
+            // Compose the final text with a single newline
+            // We put URL inside the text to have full control over spacing
+            const fullText = `${title}\n${absoluteUrl}`;
+            const encodedText = encodeURIComponent(fullText);
+            const webIntent = `https://twitter.com/intent/tweet?text=${encodedText}`;
 
-            // Use twitter.com/intent/tweet for best compatibility 2026
-            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}`;
-            
+            // 1. Detect X in-app browser
+            const ua = navigator.userAgent;
+            const isXInAppBrowser = /Twitter|X/i.test(ua) && /Mobile|Android|iPhone|iPad/i.test(ua);
+
             if (isXInAppBrowser) {
-                // X app in-app browser: use location.href to avoid double screen
-                window.location.href = shareUrl;
+                // For X in-app browser: navigate directly to avoid double screen
+                window.location.href = webIntent;
             } else {
-                // Regular browser: open in new tab
-                window.open(shareUrl, '_blank', 'noopener,noreferrer');
+                // For regular browsers: Try deep link first
+                let deepLink = webIntent; 
+                if (/iPhone|iPad|iPod/i.test(ua)) {
+                    deepLink = `twitter://post?message=${encodedText}`;
+                } else if (/Android/i.test(ua)) {
+                    deepLink = `intent://tweet#Intent;package=com.twitter.android;text=${encodedText};end`;
+                }
+
+                const opened = window.open(deepLink, '_blank');
+
+                // Fallback for cases where window.open fails
+                if (!opened || opened === null) {
+                    window.location.href = deepLink;
+                }
+
+                // If the app didn't open (browser still has focus after 1s), fallback to web
+                setTimeout(() => {
+                    if (document.hasFocus()) {
+                        window.open(webIntent, '_blank');
+                    }
+                }, 1000);
             }
             return;
         }

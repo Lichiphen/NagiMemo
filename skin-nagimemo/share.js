@@ -54,17 +54,22 @@
             const absoluteUrl = new URL(path, document.baseURI).href;
             const title = getPostTitle(xBtn);
             
-            // Detect X app in-app browser (Grok's recommendation)
-            const isXInAppBrowser = /Twitter|X/.test(navigator.userAgent) && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent);
+            // Detect X app in-app browser (only "Twitter" to avoid false match with "Mac OS X")
+            const isXInAppBrowser = /Twitter/i.test(navigator.userAgent);
             
-            // Add newline for regular browsers, space for X in-app browser to avoid double-newline bug
-            const finalText = (title || 'Check this out!') + (isXInAppBrowser ? ' ' : '\n');
+            // Always use newline for clean formatting
+            const finalText = (title || 'Check this out!') + '\n';
 
             // Use twitter.com/intent/tweet for best compatibility 2026
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}`;
             
-            // Open in new tab with security attributes
-            window.open(shareUrl, '_blank', 'noopener,noreferrer');
+            if (isXInAppBrowser) {
+                // X app in-app browser: use location.href to avoid double screen
+                window.location.href = shareUrl;
+            } else {
+                // Regular browser: open in new tab
+                window.open(shareUrl, '_blank', 'noopener,noreferrer');
+            }
             return;
         }
 

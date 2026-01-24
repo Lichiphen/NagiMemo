@@ -6,7 +6,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-NagiMemo-181717?logo=github)](https://github.com/Lichiphen/NagiMemo/)
 [![GitLab](https://img.shields.io/badge/GitLab-NagiMemo-FC6D26?logo=gitlab)](https://gitlab.com/Lichiphen/NagiMemo)
 
-現在ベータ版です。てがろぐはアップデートされていくCMSですので、スキン自体の完成は目指していないです。自分が使いやすい用にカスタマイズしたものですので、気ままに更新していきます。
+現在ベータ版です。てがろぐはアップデートされていくCMSですので、スキン自体の完成は目指していないです。自分が使いやすいようにカスタマイズしたものですので、気ままに更新していきます。
 
 ## 🚀 デモ・設定方法
 詳しい表示設定や使い方は、以下のデモサイトをご覧ください。
@@ -49,14 +49,17 @@ https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
 ## 📩 お問い合わせ
 フィードバックやご質問は以下の窓口からお気軽にどうぞ。
 
-- [**お題箱**](https://odaibako.net/u/Lichiphen) (匿名可)
+- [**mond**](https://mond.how/ja/lichiphen) (匿名可)
 - [**X (Twitter)**](https://twitter.com/lichiphen)
 - **Email**: `lichiphen@gmail.com`
 
 ## 🛠️ 使用ライブラリ・外部資産
 本スキンでは以下の素晴らしいライブラリや資産を使用しています。
 
-- [**Google Fonts**](https://fonts.google.com/) (Noto Sans JP / Poppins)
+- [**Google Fonts**](https://fonts.google.com/) (LINE Seed JP / Poppins)
+  - [LINE Seed JP](https://fonts.google.com/specimen/LINE+Seed+JP?query=Line+SEED)
+  - [Poppins](https://fonts.google.com/specimen/Poppins)  
+  - [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)(Ver1.1.3まで使用)
 - [**Material Symbols**](https://fonts.google.com/icons) (Rounded)
 - [**Font Awesome Free**](https://fontawesome.com/) - シェアボタン・コードコピー等
 - [**Twemoji**](https://github.com/twitter/twemoji)

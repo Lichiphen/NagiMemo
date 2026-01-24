@@ -507,3 +507,205 @@ footer {
 .onelogbox.logstatus-lock .onelogtext {
     opacity: 0.7;
 }
+
+/* ==========================================================================
+   Share Buttons & Toast & Modal (Added v1.1.4)
+   ========================================================================== */
+
+/* Post Body H1 Reset (first line as title) */
+.post-body h1 {
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+    line-height: inherit;
+}
+
+/* Share Row inside footer */
+.share-row {
+    display: flex;
+    gap: 8px;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-top: 1px dashed var(--border-color);
+    background: #fcfcfc;
+}
+
+@media (max-width: 600px) {
+    .share-row {
+        padding: var(--spacing-xs);
+    }
+}
+
+.share-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    border: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.share-btn:active {
+    transform: scale(0.97);
+}
+.share-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* X (Twitter) */
+.share-x {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+.share-x:hover {
+    background-color: #222;
+    color: #fff;
+}
+
+/* Copy */
+.share-copy {
+    background-color: #fff;
+    color: #475569;
+}
+.share-copy:hover {
+    background-color: #f1f5f9;
+    color: #334155;
+}
+
+/* Toast Notification */
+#toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+#toast.toast-show {
+    animation: toastFade 2s ease-in-out forwards;
+}
+@keyframes toastFade {
+    0% { opacity: 0; transform: translate(-50%, -40%); }
+    15% { opacity: 1; transform: translate(-50%, -50%); }
+    85% { opacity: 1; transform: translate(-50%, -50%); }
+    100% { opacity: 0; transform: translate(-50%, -60%); }
+}
+.toast-content {
+    background-color: rgba(15, 23, 42, 0.9); /* slate-900/90 */
+    color: white;
+    padding: 8px 24px;
+    border-radius: 9999px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+/* Credits Modal */
+/* Trigger Button */
+.credits-trigger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 10px;
+    color: #94a3b8; /* slate-400 */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    padding: 5px;
+    transition: color 0.2s;
+    margin-top: 10px;
+    display: inline-block;
+}
+.credits-trigger:hover {
+    color: #475569;
+}
+
+/* Modal Overlay */
+#credit-modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.6); /* slate-900/60 */
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+#credit-modal.modal-open {
+    display: flex;
+}
+
+/* Modal Content */
+.modal-box {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.modal-box h3 {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 20px;
+    color: #1e293b; /* slate-800 */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+.modal-content-list {
+    text-align: left;
+    font-size: 11px;
+    color: #475569; /* slate-600 */
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.modal-content-list p.label {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+.modal-content-list a {
+    color: #3b82f6; /* blue-500 */
+    text-decoration: underline;
+}
+.modal-close-btn {
+    margin-top: 32px;
+    width: 100%;
+    background-color: #0f172a; /* slate-900 */
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.modal-close-btn:active {
+    transform: scale(0.97);
+}
+

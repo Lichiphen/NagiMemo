@@ -53,7 +53,8 @@
             // Ensure absolute URL
             const absoluteUrl = new URL(path, document.baseURI).href;
             const title = getPostTitle(xBtn);
-            const finalText = title || 'Check this out!';
+            // Add newline (\n) between title and URL for mobile compatibility
+            const finalText = (title || 'Check this out!') + '\n';
 
             // Use twitter.com/intent/tweet for best compatibility 2026
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}`;

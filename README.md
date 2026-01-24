@@ -58,8 +58,8 @@ https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
 
 - [**Google Fonts**](https://fonts.google.com/) (Noto Sans JP / Poppins)
 - [**Material Symbols**](https://fonts.google.com/icons) (Rounded)
+- [**Font Awesome Free**](https://fontawesome.com/) - シェアボタン・コードコピー等
 - [**Twemoji**](https://github.com/twitter/twemoji)
-- [**jQuery**](https://jquery.com/)
 
 ### デモサイトで使用しているライブラリ
 - [**NagiSwipe**](https://github.com/lichiphen/nagiswipe) 

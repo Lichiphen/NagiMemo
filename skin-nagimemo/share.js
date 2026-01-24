@@ -53,8 +53,12 @@
             // Ensure absolute URL
             const absoluteUrl = new URL(path, document.baseURI).href;
             const title = getPostTitle(xBtn);
-            // Add newline (\n) between title and URL for mobile compatibility
-            const finalText = (title || 'Check this out!') + '\n';
+            
+            // Detect X app in-app browser (Grok's recommendation)
+            const isXInAppBrowser = /Twitter|X/.test(navigator.userAgent) && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent);
+            
+            // Add newline for regular browsers, space for X in-app browser to avoid double-newline bug
+            const finalText = (title || 'Check this out!') + (isXInAppBrowser ? ' ' : '\n');
 
             // Use twitter.com/intent/tweet for best compatibility 2026
             const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}`;

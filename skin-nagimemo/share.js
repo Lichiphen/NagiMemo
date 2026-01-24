@@ -50,20 +50,16 @@
         if (xBtn) {
             e.preventDefault();
             const path = xBtn.getAttribute('data-url') || '';
+            // Ensure absolute URL
             const absoluteUrl = new URL(path, document.baseURI).href;
             const title = getPostTitle(xBtn);
             const finalText = title || 'Check this out!';
 
-            if (isAndroid) {
-                // Android Intent for X App
-                // We use the https scheme with the twitter package to ensure proper fallback and app selection
-                const intentUrl = `intent://x.com/intent/post?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}#Intent;package=com.twitter.android;scheme=https;end`;
-                window.location.href = intentUrl;
-            } else {
-                // PC / iOS / Others -> Web
-                const webUrl = `https://x.com/intent/post?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}`;
-                window.open(webUrl, '_blank', 'noopener,noreferrer');
-            }
+            // Use twitter.com/intent/tweet for best compatibility 2026
+            const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(finalText)}&url=${encodeURIComponent(absoluteUrl)}`;
+            
+            // Open in new tab with security attributes
+            window.open(shareUrl, '_blank', 'noopener,noreferrer');
             return;
         }
 

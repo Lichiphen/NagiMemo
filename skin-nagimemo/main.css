@@ -3,7 +3,7 @@
 /*  Root Variables & Theme
  * ![NagiMemo Skin]
  * 
- * NagiMemo v1.1.4
+ * NagiMemo v1.1.5
  * Copyright (c) 2026 Lichiphen
  * Licensed under the MIT License
  * https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -1568,6 +1568,11 @@ footer {
     border-left: 4px solid var(--primary-color);
     background: #f8fafc;
     color: var(--secondary-color);
+    quotes: none; /* Disable browser default quotes */
+}
+.decorationQ::before,
+.decorationQ::after {
+    content: none !important;
 }
 .decorationQ + br { display: none; }
 
@@ -1580,28 +1585,48 @@ footer {
     word-break: break-all;
 }
 
-/* YouTube Responsive (only for YouTube iframes) */
+/* YouTube / Video Responsive */
 article iframe[src*="youtube"],
 article iframe[src*="youtu.be"],
 video.embeddedmovie,
+video.embeddedvideo,
 .embeddedmovie,
 .embeddedmusic,
 .embeddedspotify,
 .embeddedapplemusic,
-.cardlinkbox {
-    margin: 10px 0;
-    display: block; /* Ensure margins work on span/inline elements */
+.cardlinkbox,
+figure.embeddedvideo {
+    margin: 1.5em 0;
+    display: block;
 }
 
 article iframe[src*="youtube"],
 article iframe[src*="youtu.be"],
-video.embeddedmovie {
+video.embeddedmovie,
+video.embeddedvideo {
     max-width: 100% !important;
     width: 100% !important;
-    aspect-ratio: 16 / 9;
+    /* aspect-ratio: 16 / 9; */ /* Do not force for native video as it might vary */
     height: auto !important;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     border: none;
+    background: #000;
+}
+
+/* Video with Caption Layout */
+figure.embeddedvideo {
+    display: flex;
+    flex-direction: column-reverse; /* Caption below video */
+    gap: 10px;
+}
+
+.videotitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 0 10px;
 }
 
 /* Instagram Responsive */
@@ -2373,7 +2398,7 @@ ul.decorationL {
 }
 
 /* ==========================================================================
-   Share Buttons & Toast & Modal (Added v1.1.4)
+   Share Buttons & Toast & Modal (Added v1.1.5)
    ========================================================================== */
 
 /* Post Body H1 Reset (first line as title) */

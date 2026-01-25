@@ -1,6 +1,6 @@
 /**
  * NagiMemo Share & Credits Logic
- * v1.1.4
+ * v1.1.5
  */
 (function() {
     'use strict';

@@ -1,4 +1,4 @@
-// NagiMemo v1.1.4
+// NagiMemo v1.1.5
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -229,13 +229,14 @@
         });
     }
 
-    // Hide a single <br> right after a pict when the next node is plain text
-    function hideSingleBrAfterImage() {
+    // Hide a single <br> right after a pict or video when the next node is plain text
+    function hideSingleBrAfterMedia() {
         var posts = document.querySelectorAll('.post-body, .onelogbox, .article-body');
         posts.forEach(function(post) {
-            var images = post.querySelectorAll('.imagelink');
-            images.forEach(function(imgLink) {
-                var node = imgLink.nextSibling;
+            // Target both images and native video figures
+            var mediaElements = post.querySelectorAll('.imagelink, figure.embeddedvideo');
+            mediaElements.forEach(function(el) {
+                var node = el.nextSibling;
                 while (node && node.nodeType === 3 && node.textContent.trim() === '') {
                     node = node.nextSibling;
                 }
@@ -246,11 +247,12 @@
                 while (next && next.nodeType === 3 && next.textContent.trim() === '') {
                     next = next.nextSibling;
                 }
-                if (!next || next.nodeName === 'BR') return;
+                
+                // If the next real node is ANOTHER BR, do not hide (preserve intentional spacing)
+                if (next && next.nodeName === 'BR') return;
 
-                if (next.nodeType === 3 && next.textContent.trim() !== '') {
-                    brNode.classList.add('grid-hidden-br');
-                }
+                // Only hide if it's a single BR followed by something else
+                brNode.classList.add('grid-hidden-br');
             });
         });
     }
@@ -391,7 +393,7 @@
 
     // Run format
     formatImageGrid();
-    hideSingleBrAfterImage();
+    hideSingleBrAfterMedia();
     disableAutocomplete();
     initCodeCopyButtons();
     cleanupDecorations();

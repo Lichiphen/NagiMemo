@@ -59,7 +59,7 @@ https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
 - [**Google Fonts**](https://fonts.google.com/) (LINE Seed JP / Poppins)
   - [LINE Seed JP](https://fonts.google.com/specimen/LINE+Seed+JP?query=Line+SEED)
   - [Poppins](https://fonts.google.com/specimen/Poppins)  
-  - [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)(Ver1.1.3まで使用)
+  - [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)(Ver1.1.4まで使用)
 - [**Material Symbols**](https://fonts.google.com/icons) (Rounded)
 - [**Font Awesome Free**](https://fontawesome.com/) - シェアボタン・コードコピー等
 - [**Twemoji**](https://github.com/twitter/twemoji)

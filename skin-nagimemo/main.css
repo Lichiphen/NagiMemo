@@ -3,7 +3,7 @@
 /*  Root Variables & Theme
  * ![NagiMemo Skin]
  * 
- * NagiMemo v1.1.5
+ * NagiMemo v1.1.6
  * Copyright (c) 2026 Lichiphen
  * Licensed under the MIT License
  * https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -500,7 +500,7 @@ img.emoji {
 
 /* X (Twitter) Embed Reset */
 .post-body .twitter-tweet {
-    margin: 1.5rem auto !important;
+    margin: 0.5rem auto !important;
     max-width: 100% !important;
 }
 .post-body iframe[id^="twitter-widget-"] {
@@ -1594,30 +1594,65 @@ video.embeddedvideo,
 .embeddedmusic,
 .embeddedspotify,
 .embeddedapplemusic,
-.cardlinkbox,
-figure.embeddedvideo {
-    margin: 1.5em 0;
+.cardlinkbox {
+    margin-top: 0.38rem;
+    margin-bottom: 2rem;
     display: block;
 }
 
+/* 埋め込み要素直後の単一の改行を消す（<br><br>の場合は維持） */
+article iframe[src*="youtube"] + br:not(:has(+ br)),
+article iframe[src*="youtu.be"] + br:not(:has(+ br)),
+video.embeddedmovie + br:not(:has(+ br)),
+video.embeddedvideo + br:not(:has(+ br)),
+.embeddedmovie + br:not(:has(+ br)),
+.embeddedmusic + br:not(:has(+ br)),
+.embeddedspotify + br:not(:has(+ br)),
+.embeddedapplemusic + br:not(:has(+ br)),
+.cardlinkbox + br:not(:has(+ br)),
+figure.embeddedvideo + br:not(:has(+ br)) {
+    display: none;
+}
+
+/* YouTube Responsive */
 article iframe[src*="youtube"],
-article iframe[src*="youtu.be"],
-video.embeddedmovie,
-video.embeddedvideo {
+article iframe[src*="youtu.be"] {
     max-width: 100% !important;
     width: 100% !important;
-    /* aspect-ratio: 16 / 9; */ /* Do not force for native video as it might vary */
+    aspect-ratio: 16 / 9;
     height: auto !important;
     border-radius: var(--radius-md);
     border: none;
     background: #000;
 }
 
+/* Native Video Responsive */
+video.embeddedmovie,
+video.embeddedvideo {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    border-radius: var(--radius-md);
+    border: none;
+    background: #000;
+    /* margin-bottom は共通設定を優先、必要なら !important で上書き */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0.2rem;
+}
+
 /* Video with Caption Layout */
 figure.embeddedvideo {
     display: flex;
-    flex-direction: column-reverse; /* Caption below video */
+    flex-direction: column-reverse;
     gap: 10px;
+    margin-top: 0.38rem;
+    margin-bottom: 1rem !important;
+}
+
+figure {
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
 }
 
 .videotitle {
@@ -1653,6 +1688,26 @@ article iframe.instagram-media {
 /* ==========================================================================
    Image Grid Layout (JS-driven & Robust)
    ========================================================================== */
+
+/* 画像グリッド（2枚以上）のコンテナ */
+.image-grid-container {
+    display: block;
+    width: 100%;
+    margin-bottom: 0px; /* 下余白を詰め、手動の改行等に任せる */
+    clear: both;
+}
+
+/* 直前に単一の改行がある場合、コンテナ側で上余白を広げる */
+br + .image-grid-container {
+    margin-top: 1.5rem;
+}
+
+/* コンテナ内のフロート解除 */
+.image-grid-container::after {
+    content: "";
+    display: table;
+    clear: both;
+}
 
 /* 1. SINGLE Images (.single-image assigned by JS) */
 .single-image {

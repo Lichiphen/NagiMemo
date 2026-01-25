@@ -1,4 +1,4 @@
-// NagiMemo v1.1.5
+// NagiMemo v1.1.6
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -187,43 +187,31 @@
             });
             if (currentGroup.length > 0) groups.push(currentGroup);
 
-            // Apply classes based on group size
+            // Apply classes and wrap groups
             groups.forEach(function(group) {
                 var isGrid = group.length >= 2;
-                group.forEach(function(img, idx) {
-                    // Reset classes
-                    img.classList.remove('single-image', 'grid-image', 'grid-first', 'grid-last', 'grid-odd', 'grid-even');
-                    
-                    if (isGrid) {
-                        img.classList.add('grid-image');
-                        if (idx % 2 === 0) img.classList.add('grid-odd'); // 1st, 3rd...
-                        else img.classList.add('grid-even');              // 2nd, 4th...
-                    } else {
-                        img.classList.add('single-image');
-                    }
-                });
                 
-                // Add clearfix after the last image of a grid group
                 if (isGrid) {
-                    var lastImg = group[group.length - 1];
-                    // Create or mark the spacer
-                    // We can reuse the following BR if it exists, or insert a clearer
-                    var nextNode = lastImg.nextSibling;
-                    if (nextNode && nextNode.tagName === 'BR') {
-                        nextNode.classList.add('grid-clear-br');
-                    } else {
-                        // Insert a phantom clearer if needed (for float clearing)
-                        // But strictly, CSS 'grid-image' uses float, so we need to clear.
-                        // We rely on CSS ::after on the parent or the next element clearing.
-                        // Let's force a clear-fix span if text follows immediately
-                        var spacer = document.createElement('div');
-                        spacer.style.clear = 'both';
-                        if (nextNode) {
-                            lastImg.parentNode.insertBefore(spacer, nextNode);
-                        } else {
-                            lastImg.parentNode.appendChild(spacer);
-                        }
-                    }
+                    // Create container for the grid
+                    var container = document.createElement('div');
+                    container.className = 'image-grid-container';
+                    
+                    // Insert container before the first image
+                    var firstImg = group[0];
+                    firstImg.parentNode.insertBefore(container, firstImg);
+                    
+                    group.forEach(function(img, idx) {
+                        img.classList.add('grid-image');
+                        if (idx % 2 === 0) img.classList.add('grid-odd');
+                        else img.classList.add('grid-even');
+                        
+                        // Move image into container
+                        container.appendChild(img);
+                    });
+                    
+                    // Clearfix is handled by container CSS
+                } else {
+                    group[0].classList.add('single-image');
                 }
             });
         });

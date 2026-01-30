@@ -1,6 +1,4 @@
-﻿[[INCLUDE:FROM-THIS-SKIN-DIR:modules/copyright.html]]
-
-<!DOCTYPE html>
+[[INCLUDE:FROM-THIS-SKIN-DIR:modules/copyright.html]]<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -21,7 +19,7 @@
 		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 			[[!-- NagiMemo共通スタイル (ベース) --]]
-	<link rel="stylesheet" href="main.css?20260126v32">
+	<link rel="stylesheet" href="mainP26013015">
 	[[OGP]]
 </head>
 
@@ -98,9 +96,9 @@
 	[[!-- Twemoji CDN 利用のためライセンス表記免除 --]]
 	<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@14.1.0/dist/twemoji.min.js"></script>
 
-	<script src="skin-nagimemo/drag-drop-upload.js?20260125v16"></script>
-	<script src="skin-nagimemo/sidebar-profile.js?20260125v16"></script>
-	<script src="skin-nagimemo/common-ui.js?20260126v18"></script>
+	<script src="skin-nagimemo/drag-drop-uploadP26013015"></script>
+	<script src="skin-nagimemo/sidebar-profileP26013015"></script>
+	<script src="skin-nagimemo/common-uiP26013015"></script>
 	[[JS:LIGHTBOX:JQ]]
 
 	[[!-- ログイン時のみ、QUICKPOSTサムネイルでのNagiSwipe発火を抑制するJSを読み込む --]]
@@ -108,7 +106,7 @@
 	window.addEventListener('DOMContentLoaded', () => {
 		if (document.body.classList.contains('loggedin-YES')) {
 			const script = document.createElement('script');
-			script.src = '[[PATH:SKINDIR]]quickpost-exclude.js?20260125v16';
+			script.src = '[[PATH:SKINDIR]]quickpost-excludeP26013015';
 			script.defer = true;
 			document.head.appendChild(script);
 		}
@@ -116,8 +114,7 @@
 	</script>
 	[[INCLUDE:FROM-THIS-SKIN-DIR:modules/credits-modal.html]]
 
-	<script src="skin-nagimemo/share.js?20260125v16"></script>
+	<script src="skin-nagimemo/shareP26013015"></script>
 </body>
 
 </html>
-

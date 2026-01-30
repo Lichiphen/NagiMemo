@@ -1,5 +1,5 @@
 // Drag-Drop Upload JS
-// NagiMemo v1.1.6
+// NagiMemo v1.1.7
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE

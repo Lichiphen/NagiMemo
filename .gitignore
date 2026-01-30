@@ -5,6 +5,7 @@
 _doc/
 _Release/
 _doc
+.scripts/
 NagiMemo.code-workspace
 
 # OSファイル

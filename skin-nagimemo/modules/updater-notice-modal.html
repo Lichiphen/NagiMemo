@@ -1,0 +1,21 @@
+<div id="updater-notice-modal" aria-hidden="true">
+    <div class="updater-notice-box" role="dialog" aria-modal="true" aria-labelledby="updater-notice-title">
+        <p class="updater-notice-eyebrow">UPDATE AVAILABLE</p>
+        <h3 id="updater-notice-title">NagiMemo 一式に更新があります</h3>
+        <p class="updater-notice-copy">ログイン中のみ表示される更新通知です。skin-nagimemo / NagiGallery / NagiPicts / skin-nagi_sitemap と nagimemo_update.php 本体を確認できます。</p>
+        <ul class="updater-notice-list">
+            <li data-update-target="skin" hidden>
+                <strong>NagiMemo 一式</strong>
+                <span class="updater-notice-meta"></span>
+            </li>
+            <li data-update-target="updater" hidden>
+                <strong>nagimemo_update.php</strong>
+                <span class="updater-notice-meta"></span>
+            </li>
+        </ul>
+        <div class="updater-notice-actions">
+            <a id="updater-notice-open" class="updater-notice-btn" href="nagimemo_update.php">更新する</a>
+            <button id="updater-notice-later" class="updater-notice-btn is-secondary" type="button">あとで</button>
+        </div>
+    </div>
+</div>

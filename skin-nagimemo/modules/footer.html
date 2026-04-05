@@ -6,6 +6,18 @@
 	</div>
 
 	<p class="backlink">[[FREE:HOMELINK]]</p>
+	[[IF(loggedin):
+	<div class="footer-heatmap">
+		<p class="footer-heatmap-hint" aria-hidden="true">
+			<span>スクロールできます</span>
+			<svg viewBox="0 0 48 16" role="presentation" focusable="false">
+				<path d="M2 8h34"></path>
+				<path d="M28 2l12 6-12 6"></path>
+			</svg>
+		</p>
+		<div class="footer-heatmap-scroll">[[HEATMAP]]</div>
+	</div>
+	:IF]]
 	[[!--不要であればfooter-navのdivや、p の[[FREE:HOMELINK]]はコメントアウトするか、削除してください--]]
 	[[!--以下はてがろぐ本家のものなので、削除しないでください--]]
 	<p class="poweredby">[[VERSION]].</p>

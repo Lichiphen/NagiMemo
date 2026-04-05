@@ -3,7 +3,7 @@
 /*  Root Variables & Theme
  * ![NagiMemo Skin]
  * 
- * NagiMemo v1.1.7
+ * NagiMemo v1.1.8
  * Copyright (c) 2026 Lichiphen
  * Licensed under the MIT License
  * https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -14,6 +14,12 @@
     --primary-hover: #1d4ed8;
     --secondary-color: #475569;
     --accent-color: #06b6d4;
+    --app-scrollbar-track: rgba(219, 234, 254, 0.92);
+    --app-scrollbar-track-strong: rgba(186, 230, 253, 0.98);
+    --app-scrollbar-thumb-start: #7dd3fc;
+    --app-scrollbar-thumb-end: #1e40af;
+    --app-scrollbar-thumb-hover-start: #38bdf8;
+    --app-scrollbar-thumb-hover-end: #1d4ed8;
     
     --bg-body: #f1f5f9;
     --bg-card: #ffffff;
@@ -68,6 +74,40 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+html,
+body,
+textarea,
+select,
+* {
+    scrollbar-color: var(--app-scrollbar-thumb-end) var(--app-scrollbar-track);
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, var(--app-scrollbar-track), var(--app-scrollbar-track-strong));
+    border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--app-scrollbar-thumb-start), var(--app-scrollbar-thumb-end));
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--app-scrollbar-thumb-hover-start), var(--app-scrollbar-thumb-hover-end));
+}
+
+*::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 a {
@@ -1594,6 +1634,8 @@ video.embeddedvideo,
 .embeddedmusic,
 .embeddedspotify,
 .embeddedapplemusic,
+.embeddedyoutube,
+.embeddednicovideo,
 .cardlinkbox {
     margin-top: 0.38rem;
     margin-bottom: 2rem;
@@ -1610,13 +1652,16 @@ video.embeddedvideo + br:not(:has(+ br)),
 .embeddedspotify + br:not(:has(+ br)),
 .embeddedapplemusic + br:not(:has(+ br)),
 .cardlinkbox + br:not(:has(+ br)),
-figure.embeddedvideo + br:not(:has(+ br)) {
+figure.embeddedvideo + br:not(:has(+ br)),
+.embeddedyoutube + br:not(:has(+ br)),
+.embeddednicovideo + br:not(:has(+ br)) {
     display: none;
 }
 
-/* YouTube Responsive */
-article iframe[src*="youtube"],
-article iframe[src*="youtu.be"] {
+/* YouTube / Nicovideo Responsive Wrapper */
+.embeddedyoutube,
+.embeddednicovideo {
+    position: relative;
     max-width: 100% !important;
     width: 100% !important;
     aspect-ratio: 16 / 9;
@@ -1624,6 +1669,32 @@ article iframe[src*="youtu.be"] {
     border-radius: var(--radius-md);
     border: none;
     background: #000;
+    overflow: hidden;
+    display: block;
+}
+
+/* Inner Iframe Responsive */
+article iframe[src*="youtube"],
+article iframe[src*="youtu.be"],
+.embeddedyoutube iframe,
+.embeddednicovideo iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: var(--radius-md);
+    border: none;
+    background: #000;
+}
+
+/* Fallback for direct iframe embedding (without wrapper span) to maintain standard aspect ratio */
+article iframe[src*="youtube"]:not(.embeddedyoutube iframe),
+article iframe[src*="youtu.be"]:not(.embeddedyoutube iframe) {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    height: auto !important;
 }
 
 /* Native Video Responsive */
@@ -2453,7 +2524,7 @@ ul.decorationL {
 }
 
 /* ==========================================================================
-   Share Buttons & Toast & Modal (Added v1.1.7)
+   Share Buttons & Toast & Modal (Added v1.1.8)
    ========================================================================== */
 
 /* Post Body H1 Reset (first line as title) */
@@ -2652,4 +2723,161 @@ ul.decorationL {
 .modal-close-btn:active {
     transform: scale(0.97);
 }
+
+/* 日付折り畳みリスト内の追加装飾 */
+.datelimit-expand {
+    border-left: 3px solid var(--primary-color);
+    padding-left: 0.5rem;
+    margin-left: 0.2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+/* 本文内折り畳み（[O:〜] 記法）装飾 */
+.post-body details {
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+}
+.post-body details summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-main);
+    user-select: none;
+}
+.post-body details > div {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border-color);
+    animation: fadeIn 0.2s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Updater Notice Modal
+   ========================================================================== */
+
+#updater-notice-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(15, 23, 42, 0.58);
+    backdrop-filter: blur(6px);
+    z-index: 2100;
+}
+
+#updater-notice-modal.modal-open {
+    display: flex;
+}
+
+.updater-notice-box {
+    width: min(100%, 420px);
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px 24px 24px;
+    box-shadow: 0 28px 60px rgba(15, 23, 42, 0.24);
+    border: 1px solid var(--border-color);
+}
+
+.updater-notice-eyebrow {
+    margin: 0 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.updater-notice-box h3 {
+    margin: 0 0 12px;
+    font-size: 1.3rem;
+    color: var(--text-main);
+}
+
+.updater-notice-copy {
+    margin: 0 0 18px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+.updater-notice-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+    display: grid;
+    gap: 12px;
+}
+
+.updater-notice-list li {
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: #fffdf9;
+}
+
+.updater-notice-list strong {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-main);
+}
+
+.updater-notice-meta {
+    display: block;
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.9rem;
+}
+
+.updater-notice-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.updater-notice-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 12px 14px;
+    border: none;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.updater-notice-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.updater-notice-btn.is-secondary {
+    background: #d9d2ca;
+    color: var(--text-main);
+}
+
+@media (max-width: 600px) {
+    .updater-notice-box {
+        padding: 24px 18px 18px;
+    }
+
+    .updater-notice-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+
 

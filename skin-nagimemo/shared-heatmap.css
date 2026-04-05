@@ -1,0 +1,247 @@
+@charset "utf-8";
+
+/* Shared heatmap styles for NagiMemo skins */
+
+.footer-heatmap {
+    margin: 0 auto var(--spacing-md);
+    width: 100%;
+    max-width: min(100%, var(--content-max-width));
+    padding: 0 var(--spacing-sm);
+}
+
+.footer-heatmap,
+.calendarheatmap {
+    --heatmap-scrollbar-track: rgba(219, 234, 254, 0.92);
+    --heatmap-scrollbar-track-strong: rgba(186, 230, 253, 0.98);
+    --heatmap-scrollbar-thumb-solid: #2563eb;
+    --heatmap-scrollbar-thumb-start: #7dd3fc;
+    --heatmap-scrollbar-thumb-end: #1e40af;
+    --heatmap-scrollbar-thumb-hover-start: #38bdf8;
+    --heatmap-scrollbar-thumb-hover-end: #1d4ed8;
+}
+
+.footer-heatmap-hint {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 0 10px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.footer-heatmap-hint svg {
+    width: 48px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: heatmapScrollArrow 1.4s ease-in-out infinite;
+}
+
+.footer-heatmap-scroll {
+    width: 100%;
+}
+
+.footer-heatmap-scroll,
+.calendarheatmap {
+    scrollbar-color: var(--heatmap-scrollbar-thumb-solid) var(--heatmap-scrollbar-track);
+    scrollbar-width: thin;
+}
+
+.footer-heatmap-scroll::-webkit-scrollbar,
+.calendarheatmap::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.footer-heatmap-scroll::-webkit-scrollbar-track,
+.calendarheatmap::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, var(--heatmap-scrollbar-track), var(--heatmap-scrollbar-track-strong));
+    border-radius: 999px;
+}
+
+.footer-heatmap-scroll::-webkit-scrollbar-thumb,
+.calendarheatmap::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--heatmap-scrollbar-thumb-start), var(--heatmap-scrollbar-thumb-end));
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+.footer-heatmap-scroll::-webkit-scrollbar-thumb:hover,
+.calendarheatmap::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--heatmap-scrollbar-thumb-hover-start), var(--heatmap-scrollbar-thumb-hover-end));
+}
+
+.footer-heatmap-scroll::-webkit-scrollbar-corner,
+.calendarheatmap::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.footer-heatmap .calendarheatmap {
+    margin: 0 auto;
+    width: fit-content;
+    max-width: 100%;
+    overflow: visible;
+    position: relative;
+}
+
+.footer-heatmap .calendarheatmap.is-enhanced {
+    padding-top: calc(var(--chm-fontsize) + 10px);
+}
+
+.footer-heatmap .calendarheatmap-months {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    height: calc(var(--chm-fontsize) + 2px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.footer-heatmap .calendarheatmap-months span {
+    position: absolute;
+    top: 0;
+    color: var(--text-muted);
+    font-size: var(--chm-fontsize);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.footer-heatmap .calendarheatmap.is-enhanced .weekhead {
+    height: 0;
+    min-height: 0;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
+    color: transparent;
+}
+
+@keyframes heatmapScrollArrow {
+    0%, 100% {
+        transform: translateX(0);
+        opacity: 0.45;
+    }
+    50% {
+        transform: translateX(8px);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-heatmap {
+        padding: 0;
+    }
+
+    .footer-heatmap-hint {
+        display: inline-flex;
+    }
+
+    .footer-heatmap-scroll {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding: 0 0 8px;
+    }
+
+    .footer-heatmap .calendarheatmap {
+        width: max-content;
+        max-width: none;
+        margin: 0;
+        padding: 5px 10px;
+        --chm-box-size: 9px;
+        --chm-fontsize: 8px;
+    }
+}
+
+/* Calendar heatmap blocks */
+.calendarheatmap {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    margin: 1rem auto;
+    padding: 5px;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+
+    --chm-box-size: 10px;
+    --chm-fontsize: 9px;
+}
+
+.chmWeek {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.weekhead {
+    display: block;
+    font-size: var(--chm-fontsize);
+    width: var(--chm-box-size);
+    height: var(--chm-box-size);
+    line-height: var(--chm-box-size);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: visible;
+}
+
+.chmDay {
+    display: block;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    width: var(--chm-box-size);
+    height: var(--chm-box-size);
+    background-color: #ffffff;
+    transition: transform 0.1s;
+}
+
+.chmDay:hover {
+    transform: scale(1.2);
+}
+
+.chmDay time,
+.chmDay b {
+    display: none;
+}
+
+.weekNames {
+    flex: 1;
+}
+
+.weekNames span {
+    display: block;
+    border: 1px solid transparent;
+    width: 2em;
+    height: var(--chm-box-size);
+    font-size: var(--chm-fontsize);
+    line-height: var(--chm-box-size);
+    text-align: right;
+    color: var(--text-muted);
+    padding-right: 4px;
+}
+
+/* Blue heatmap scale */
+.exist0 { background-color: #ffffff; border-color: var(--border-color); }
+.exist1 { background-color: #eff6ff; border-color: #dbeafe; }
+.exist2 { background-color: #dbeafe; border-color: #bfdbfe; }
+.exist3 { background-color: #bfdbfe; border-color: #93c5fd; }
+.exist4 { background-color: #93c5fd; border-color: #60a5fa; }
+.exist5 { background-color: #60a5fa; border-color: #3b82f6; }
+.exist6 { background-color: #3b82f6; border-color: var(--primary-color); }
+.exist7 { background-color: var(--primary-color); border-color: var(--primary-hover); }
+.exist8 { background-color: var(--primary-hover); border-color: #1e40af; }
+.exist9 { background-color: #1e40af; border-color: #1e3a8a; }
+.exist10, .exist11 { background-color: #1e3a8a; border-color: #172554; }
+.exist12, .exist13 { background-color: #172554; border-color: #0f172a; }
+.exist14, .exist15 { background-color: #0f172a; border-color: #020617; }
+.over15 { background-color: #020617; border-color: #000000; }
+.over20 { background-color: #000000; border-color: #000000; }

@@ -15,6 +15,12 @@
     --primary-hover: #1d4ed8;
     --secondary-color: #475569;
     --accent-color: #06b6d4;
+    --app-scrollbar-track: rgba(219, 234, 254, 0.92);
+    --app-scrollbar-track-strong: rgba(186, 230, 253, 0.98);
+    --app-scrollbar-thumb-start: #7dd3fc;
+    --app-scrollbar-thumb-end: #1e40af;
+    --app-scrollbar-thumb-hover-start: #38bdf8;
+    --app-scrollbar-thumb-hover-end: #1d4ed8;
     
     --bg-body: #f1f5f9;
     --bg-card: #ffffff;
@@ -71,6 +77,40 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+}
+
+html,
+body,
+textarea,
+select,
+* {
+    scrollbar-color: var(--app-scrollbar-thumb-end) var(--app-scrollbar-track);
+    scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, var(--app-scrollbar-track), var(--app-scrollbar-track-strong));
+    border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--app-scrollbar-thumb-start), var(--app-scrollbar-thumb-end));
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--app-scrollbar-thumb-hover-start), var(--app-scrollbar-thumb-hover-end));
+}
+
+*::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 a {
@@ -708,4 +748,5 @@ footer {
 .modal-close-btn:active {
     transform: scale(0.97);
 }
+
 

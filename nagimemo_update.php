@@ -2,7 +2,7 @@
 /**
  * NagiMemo Updater
  * NagiMemo Updater v1.1.8
- * Updater Build: 2026040605
+ * Updater Build: 202604060427
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ
@@ -453,7 +453,74 @@ function build_package_update_summary($counts, $labels)
     return implode(' / ', $parts);
 }
 
-function detect_skin_health_issues()
+function extract_local_asset_references($content)
+{
+    if (!is_string($content) || $content === '') {
+        return array();
+    }
+
+    if (!preg_match_all('/["\']((?!https?:\/\/|\/\/)[^"\']+\.(?:css|js)\?[0-9A-Za-z_-]+)["\']/', $content, $matches)) {
+        return array();
+    }
+
+    $references = array();
+    foreach ($matches[1] as $reference) {
+        if (!in_array($reference, $references, true)) {
+            $references[] = $reference;
+        }
+    }
+
+    return $references;
+}
+
+function build_expected_cover_asset_map($build_stamp)
+{
+    if (!is_string($build_stamp) || $build_stamp === '') {
+        return array();
+    }
+
+    $suffix = '?' . $build_stamp;
+
+    return array(
+        'skin-nagimemo/skin-cover.html' => array(
+            '[[PATH:SKINDIR]]main.css' . $suffix,
+            '[[PATH:SKINDIR]]shared-heatmap.css' . $suffix,
+            '[[PATH:SKINDIR]]drag-drop-upload.js' . $suffix,
+            '[[PATH:SKINDIR]]sidebar-profile.js' . $suffix,
+            '[[PATH:SKINDIR]]common-ui.js' . $suffix,
+            '[[PATH:SKINDIR]]quickpost-exclude.js' . $suffix,
+            '[[PATH:SKINDIR]]heatmap-labels.js' . $suffix,
+            '[[PATH:SKINDIR]]updater-notice.js' . $suffix,
+            '[[PATH:SKINDIR]]share.js' . $suffix,
+        ),
+        'NagiGallery/skin-cover.html' => array(
+            '[[PATH:SKINDIR]]main.css' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/shared-heatmap.css' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/common-ui.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/heatmap-labels.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/share.js' . $suffix,
+        ),
+        'NagiPicts/skin-cover.html' => array(
+            '[[PATH:SKINDIR]]../skin-nagimemo/main.css' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/shared-heatmap.css' . $suffix,
+            '[[PATH:SKINDIR]]picts-style.css' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/common-ui.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/heatmap-labels.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/share.js' . $suffix,
+        ),
+        'skin-nagi_sitemap/skin-cover.html' => array(
+            '[[PATH:SKINDIR]]../skin-nagimemo/main.css' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/shared-heatmap.css' . $suffix,
+            '[[PATH:SKINDIR]]sitemap-overrides.css' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/sidebar-profile.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/common-ui.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/heatmap-labels.js' . $suffix,
+            '[[PATH:SKINDIR]]../skin-nagimemo/share.js' . $suffix,
+        ),
+    );
+}
+
+function detect_skin_health_issues($expected_build_stamp)
 {
     $issues = array();
     $required_files = array(
@@ -462,12 +529,7 @@ function detect_skin_health_issues()
         'skin-nagimemo/updater-notice.js',
         'skin-nagimemo/modules/updater-notice-modal.html',
     );
-    $cover_files = array(
-        'skin-nagimemo/skin-cover.html',
-        'NagiGallery/skin-cover.html',
-        'NagiPicts/skin-cover.html',
-        'skin-nagi_sitemap/skin-cover.html',
-    );
+    $cover_files = build_expected_cover_asset_map($expected_build_stamp);
 
     foreach ($required_files as $file_path) {
         if (!file_exists($file_path)) {
@@ -475,7 +537,7 @@ function detect_skin_health_issues()
         }
     }
 
-    foreach ($cover_files as $cover_file) {
+    foreach ($cover_files as $cover_file => $expected_assets) {
         if (!file_exists($cover_file)) {
             $issues[] = $cover_file . ' が見つかりません。';
             continue;
@@ -490,31 +552,10 @@ function detect_skin_health_issues()
         if (preg_match('/P20[0-9]{8,}/', $content)) {
             $issues[] = $cover_file . ' に壊れたアセット参照を検出しました。';
         }
-    }
 
-    $main_cover_file = 'skin-nagimemo/skin-cover.html';
-    if (file_exists($main_cover_file)) {
-        $main_cover_content = @file_get_contents($main_cover_file);
-        if ($main_cover_content === false) {
-            $issues[] = $main_cover_file . ' を読み込めません。';
-        } else {
-            $required_snippets = array(
-                '[[PATH:SKINDIR]]main.css?',
-                '[[PATH:SKINDIR]]shared-heatmap.css?',
-                '[[PATH:SKINDIR]]drag-drop-upload.js?',
-                '[[PATH:SKINDIR]]sidebar-profile.js?',
-                '[[PATH:SKINDIR]]common-ui.js?',
-                '[[PATH:SKINDIR]]heatmap-labels.js?',
-                '[[PATH:SKINDIR]]updater-notice.js?',
-                '[[PATH:SKINDIR]]share.js?',
-            );
-
-            foreach ($required_snippets as $snippet) {
-                if (strpos($main_cover_content, $snippet) === false) {
-                    $issues[] = $main_cover_file . ' のアセット参照が不足しています。';
-                    break;
-                }
-            }
+        $local_assets = extract_local_asset_references($content);
+        if ($local_assets !== $expected_assets) {
+            $issues[] = $cover_file . ' の CSS/JS 読み込み内容が現在の配布版と一致しません。';
         }
     }
 
@@ -543,13 +584,6 @@ $remote_updater_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_nam
 $zip_url = "https://github.com/{$repo_user}/{$repo_name}/archive/refs/heads/{$branch}.zip";
 
 $local_skin_version = get_local_version($version_file);
-$remote_skin_content = fetch_remote_data($remote_version_url, 5);
-$remote_skin_version = get_version_from_content($remote_skin_content);
-$skin_health_issues = detect_skin_health_issues();
-$skin_version_update = $local_skin_version && $remote_skin_version && version_compare($local_skin_version, $remote_skin_version, '<');
-$skin_repair_needed = !$skin_version_update && !empty($skin_health_issues);
-$skin_needs_update = $skin_version_update || $skin_repair_needed;
-
 $local_updater_content = @file_get_contents(__FILE__);
 $remote_updater_content = fetch_remote_data($remote_updater_url, 5);
 $updater_info = evaluate_updater_state($local_updater_content, $remote_updater_content, $user_settings_marker, $system_settings_marker);
@@ -560,6 +594,13 @@ $remote_updater_build = $updater_info['remote_build'];
 $local_updater_signature = $updater_info['local_signature'];
 $remote_updater_signature = $updater_info['remote_signature'];
 $updater_needs_update = $updater_info['needs_update'];
+$remote_skin_content = fetch_remote_data($remote_version_url, 5);
+$remote_skin_version = get_version_from_content($remote_skin_content);
+$expected_skin_build = $remote_updater_build !== null ? $remote_updater_build : $local_updater_build;
+$skin_health_issues = detect_skin_health_issues($expected_skin_build);
+$skin_version_update = $local_skin_version && $remote_skin_version && version_compare($local_skin_version, $remote_skin_version, '<');
+$skin_repair_needed = !$skin_version_update && !empty($skin_health_issues);
+$skin_needs_update = $skin_version_update || $skin_repair_needed;
 
 $skin_signature = $remote_skin_version !== null ? 'skin:' . $remote_skin_version : '';
 if ($skin_repair_needed) {

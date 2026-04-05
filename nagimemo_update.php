@@ -2,7 +2,7 @@
 /**
  * NagiMemo Updater
  * NagiMemo Updater v1.1.8
- * Updater Build: 2026040604
+ * Updater Build: 2026040605
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ
@@ -489,6 +489,32 @@ function detect_skin_health_issues()
 
         if (preg_match('/P20[0-9]{8,}/', $content)) {
             $issues[] = $cover_file . ' に壊れたアセット参照を検出しました。';
+        }
+    }
+
+    $main_cover_file = 'skin-nagimemo/skin-cover.html';
+    if (file_exists($main_cover_file)) {
+        $main_cover_content = @file_get_contents($main_cover_file);
+        if ($main_cover_content === false) {
+            $issues[] = $main_cover_file . ' を読み込めません。';
+        } else {
+            $required_snippets = array(
+                '[[PATH:SKINDIR]]main.css?',
+                '[[PATH:SKINDIR]]shared-heatmap.css?',
+                '[[PATH:SKINDIR]]drag-drop-upload.js?',
+                '[[PATH:SKINDIR]]sidebar-profile.js?',
+                '[[PATH:SKINDIR]]common-ui.js?',
+                '[[PATH:SKINDIR]]heatmap-labels.js?',
+                '[[PATH:SKINDIR]]updater-notice.js?',
+                '[[PATH:SKINDIR]]share.js?',
+            );
+
+            foreach ($required_snippets as $snippet) {
+                if (strpos($main_cover_content, $snippet) === false) {
+                    $issues[] = $main_cover_file . ' のアセット参照が不足しています。';
+                    break;
+                }
+            }
         }
     }
 

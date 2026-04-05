@@ -250,15 +250,21 @@ img.emoji {
 
 /* Mobile Styling */
 @media (max-width: 900px) {
-    .contents {
+    body.nagimemo-main .contents {
         display: block;
-        margin-top: var(--spacing-sm);
+        margin: 0;
+        padding: 0;
+        max-width: none;
     }
     
-    .contents .mainarea {
+    body.nagimemo-main .contents .mainarea {
         width: 100%;
         max-width: 100%;
         margin-right: 0;
+    }
+
+    body.nagimemo-main .situation-block {
+        padding: 0 var(--spacing-md);
     }
     
     .subarea {
@@ -1586,7 +1592,7 @@ footer {
         border-radius: 0;
         border-left: none;
         border-right: none;
-        padding: 16px;
+        padding: 16px 0;
     }
 }
 
@@ -2736,11 +2742,11 @@ ul.decorationL {
 /* 本文内折り畳み（[O:〜] 記法）装飾 */
 .post-body details {
     margin: 0.5rem 0;
-    padding: 0.5rem 0.8rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-sm);
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 .post-body details summary {
     cursor: pointer;
@@ -2749,9 +2755,8 @@ ul.decorationL {
     user-select: none;
 }
 .post-body details > div {
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px dashed var(--border-color);
+    margin-top: 0;
+    border-top: none;
     animation: fadeIn 0.2s ease-in-out;
 }
 @keyframes fadeIn {
@@ -2878,6 +2883,3 @@ ul.decorationL {
         grid-template-columns: 1fr;
     }
 }
-
-
-

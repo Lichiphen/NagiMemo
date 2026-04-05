@@ -2,7 +2,7 @@
 /**
  * NagiMemo Updater
  * NagiMemo Updater v1.1.8
- * Updater Build: 202604060427
+ * Updater Build: 202604060442
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ
@@ -364,11 +364,11 @@ function updater_detail_text($updater_info)
 function build_update_headline($skin_needs_update, $updater_needs_update, $skin_repair_needed)
 {
     if ($skin_repair_needed && $updater_needs_update) {
-        return 'NagiMemo 一式の修復更新と nagimemo_update.php 本体の更新を検出しました。';
+        return 'NagiMemo 一式の管理範囲に差分があり、nagimemo_update.php 本体の更新も検出しました。';
     }
 
     if ($skin_repair_needed) {
-        return 'NagiMemo 一式の設置内容に問題を検出しました。';
+        return 'NagiMemo 一式の管理範囲に差分を検出しました。';
     }
 
     if ($skin_needs_update && $updater_needs_update) {
@@ -389,11 +389,11 @@ function build_update_headline($skin_needs_update, $updater_needs_update, $skin_
 function build_update_intro($skin_needs_update, $updater_needs_update, $updater_info, $skin_repair_needed)
 {
     if ($skin_repair_needed && $updater_needs_update) {
-        return '壊れたアセット参照や不足ファイルを修復しつつ、nagimemo_update.php 本体も更新できます。';
+        return 'cover.html の管理範囲や不足ファイルを修復しつつ、nagimemo_update.php 本体も更新できます。';
     }
 
     if ($skin_repair_needed) {
-        return '壊れたアセット参照や不足ファイルを検出したため、skin-nagimemo / NagiGallery / NagiPicts / skin-nagi_sitemap を修復更新します。';
+        return 'cover.html の管理範囲または不足ファイルに差分を検出したため、skin-nagimemo / NagiGallery / NagiPicts / skin-nagi_sitemap を修復更新します。';
     }
 
     if ($skin_needs_update && $updater_needs_update) {
@@ -453,74 +453,98 @@ function build_package_update_summary($counts, $labels)
     return implode(' / ', $parts);
 }
 
-function extract_local_asset_references($content)
+function build_cover_file_list()
 {
-    if (!is_string($content) || $content === '') {
-        return array();
-    }
-
-    if (!preg_match_all('/["\']((?!https?:\/\/|\/\/)[^"\']+\.(?:css|js)\?[0-9A-Za-z_-]+)["\']/', $content, $matches)) {
-        return array();
-    }
-
-    $references = array();
-    foreach ($matches[1] as $reference) {
-        if (!in_array($reference, $references, true)) {
-            $references[] = $reference;
-        }
-    }
-
-    return $references;
+    return array(
+        'skin-nagimemo/skin-cover.html',
+        'NagiGallery/skin-cover.html',
+        'NagiPicts/skin-cover.html',
+        'skin-nagi_sitemap/skin-cover.html',
+    );
 }
 
-function build_expected_cover_asset_map($build_stamp)
+function build_cover_custom_block_markers()
 {
-    if (!is_string($build_stamp) || $build_stamp === '') {
-        return array();
-    }
-
-    $suffix = '?' . $build_stamp;
-
     return array(
-        'skin-nagimemo/skin-cover.html' => array(
-            '[[PATH:SKINDIR]]main.css' . $suffix,
-            '[[PATH:SKINDIR]]shared-heatmap.css' . $suffix,
-            '[[PATH:SKINDIR]]drag-drop-upload.js' . $suffix,
-            '[[PATH:SKINDIR]]sidebar-profile.js' . $suffix,
-            '[[PATH:SKINDIR]]common-ui.js' . $suffix,
-            '[[PATH:SKINDIR]]quickpost-exclude.js' . $suffix,
-            '[[PATH:SKINDIR]]heatmap-labels.js' . $suffix,
-            '[[PATH:SKINDIR]]updater-notice.js' . $suffix,
-            '[[PATH:SKINDIR]]share.js' . $suffix,
+        'head' => array(
+            'start' => '[[!-- NAGIMEMO:CUSTOM-HEAD:START --]]',
+            'end' => '[[!-- NAGIMEMO:CUSTOM-HEAD:END --]]',
         ),
-        'NagiGallery/skin-cover.html' => array(
-            '[[PATH:SKINDIR]]main.css' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/shared-heatmap.css' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/common-ui.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/heatmap-labels.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/share.js' . $suffix,
-        ),
-        'NagiPicts/skin-cover.html' => array(
-            '[[PATH:SKINDIR]]../skin-nagimemo/main.css' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/shared-heatmap.css' . $suffix,
-            '[[PATH:SKINDIR]]picts-style.css' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/common-ui.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/heatmap-labels.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/share.js' . $suffix,
-        ),
-        'skin-nagi_sitemap/skin-cover.html' => array(
-            '[[PATH:SKINDIR]]../skin-nagimemo/main.css' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/shared-heatmap.css' . $suffix,
-            '[[PATH:SKINDIR]]sitemap-overrides.css' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/sidebar-profile.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/common-ui.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/heatmap-labels.js' . $suffix,
-            '[[PATH:SKINDIR]]../skin-nagimemo/share.js' . $suffix,
+        'foot' => array(
+            'start' => '[[!-- NAGIMEMO:CUSTOM-FOOT:START --]]',
+            'end' => '[[!-- NAGIMEMO:CUSTOM-FOOT:END --]]',
         ),
     );
 }
 
-function detect_skin_health_issues($expected_build_stamp)
+function normalize_cover_managed_content($content, $markers)
+{
+    if (!is_string($content) || $content === '') {
+        return null;
+    }
+
+    $normalized = normalize_newlines($content);
+
+    foreach ($markers as $block_name => $marker) {
+        $block = extract_settings_block($normalized, $marker['start'], $marker['end']);
+        if ($block === null) {
+            return null;
+        }
+
+        $normalized = replace_settings_block(
+            $normalized,
+            "\n__NAGIMEMO_" . strtoupper($block_name) . "_BLOCK__\n",
+            $marker['start'],
+            $marker['end']
+        );
+    }
+
+    return trim($normalized);
+}
+
+function merge_cover_with_local_custom_blocks($remote_content, $local_content, $markers)
+{
+    if (!is_string($remote_content) || $remote_content === '') {
+        return $remote_content;
+    }
+
+    $merged = normalize_newlines($remote_content);
+    if (!is_string($local_content) || $local_content === '') {
+        return $merged;
+    }
+
+    $local_normalized = normalize_newlines($local_content);
+
+    foreach ($markers as $marker) {
+        $remote_block = extract_settings_block($merged, $marker['start'], $marker['end']);
+        if ($remote_block === null) {
+            continue;
+        }
+
+        $local_block = extract_settings_block($local_normalized, $marker['start'], $marker['end']);
+        if ($local_block === null) {
+            continue;
+        }
+
+        $merged = replace_settings_block($merged, $local_block, $marker['start'], $marker['end']);
+    }
+
+    return $merged;
+}
+
+function build_remote_cover_contents($repo_user, $repo_name, $branch, $cover_files)
+{
+    $contents = array();
+
+    foreach ($cover_files as $cover_file) {
+        $cover_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_name}/{$branch}/" . str_replace('\\', '/', $cover_file);
+        $contents[$cover_file] = fetch_remote_data($cover_url, 5);
+    }
+
+    return $contents;
+}
+
+function detect_skin_health_issues($cover_files, $remote_cover_contents)
 {
     $issues = array();
     $required_files = array(
@@ -529,7 +553,7 @@ function detect_skin_health_issues($expected_build_stamp)
         'skin-nagimemo/updater-notice.js',
         'skin-nagimemo/modules/updater-notice-modal.html',
     );
-    $cover_files = build_expected_cover_asset_map($expected_build_stamp);
+    $cover_markers = build_cover_custom_block_markers();
 
     foreach ($required_files as $file_path) {
         if (!file_exists($file_path)) {
@@ -537,7 +561,7 @@ function detect_skin_health_issues($expected_build_stamp)
         }
     }
 
-    foreach ($cover_files as $cover_file => $expected_assets) {
+    foreach ($cover_files as $cover_file) {
         if (!file_exists($cover_file)) {
             $issues[] = $cover_file . ' が見つかりません。';
             continue;
@@ -553,9 +577,25 @@ function detect_skin_health_issues($expected_build_stamp)
             $issues[] = $cover_file . ' に壊れたアセット参照を検出しました。';
         }
 
-        $local_assets = extract_local_asset_references($content);
-        if ($local_assets !== $expected_assets) {
-            $issues[] = $cover_file . ' の CSS/JS 読み込み内容が現在の配布版と一致しません。';
+        $normalized_local = normalize_cover_managed_content($content, $cover_markers);
+        if ($normalized_local === null) {
+            $issues[] = $cover_file . ' にアップデート保持用コメントが見つかりません。';
+            continue;
+        }
+
+        $remote_cover_content = isset($remote_cover_contents[$cover_file]) ? $remote_cover_contents[$cover_file] : null;
+        if (!is_string($remote_cover_content) || $remote_cover_content === '') {
+            continue;
+        }
+
+        $normalized_remote = normalize_cover_managed_content($remote_cover_content, $cover_markers);
+        if ($normalized_remote === null) {
+            $issues[] = $cover_file . ' の GitHub 配布版にアップデート保持用コメントが見つかりません。';
+            continue;
+        }
+
+        if ($normalized_local !== $normalized_remote) {
+            $issues[] = $cover_file . ' の管理範囲が現在の配布版と一致しません。';
         }
     }
 
@@ -582,6 +622,8 @@ if (!empty($allowed_ips) && !in_array($remote_addr, $allowed_ips, true)) {
 $remote_version_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_name}/{$branch}/{$version_file}";
 $remote_updater_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_name}/{$branch}/{$updater_entry}";
 $zip_url = "https://github.com/{$repo_user}/{$repo_name}/archive/refs/heads/{$branch}.zip";
+$cover_files = build_cover_file_list();
+$cover_custom_markers = build_cover_custom_block_markers();
 
 $local_skin_version = get_local_version($version_file);
 $local_updater_content = @file_get_contents(__FILE__);
@@ -596,8 +638,8 @@ $remote_updater_signature = $updater_info['remote_signature'];
 $updater_needs_update = $updater_info['needs_update'];
 $remote_skin_content = fetch_remote_data($remote_version_url, 5);
 $remote_skin_version = get_version_from_content($remote_skin_content);
-$expected_skin_build = $remote_updater_build !== null ? $remote_updater_build : $local_updater_build;
-$skin_health_issues = detect_skin_health_issues($expected_skin_build);
+$remote_cover_contents = build_remote_cover_contents($repo_user, $repo_name, $branch, $cover_files);
+$skin_health_issues = detect_skin_health_issues($cover_files, $remote_cover_contents);
 $skin_version_update = $local_skin_version && $remote_skin_version && version_compare($local_skin_version, $remote_skin_version, '<');
 $skin_repair_needed = !$skin_version_update && !empty($skin_health_issues);
 $skin_needs_update = $skin_version_update || $skin_repair_needed;
@@ -808,11 +850,21 @@ if (isset($_POST['update']) && $any_update_available) {
                         continue;
                     }
 
+                    $local_file_content = null;
                     if (file_exists($relative_path)) {
                         $local_file_content = @file_get_contents($relative_path);
-                        if ($local_file_content !== false && $local_file_content === $remote_file_content) {
-                            continue;
-                        }
+                    }
+
+                    if (in_array($relative_path, $cover_files, true)) {
+                        $remote_file_content = merge_cover_with_local_custom_blocks(
+                            $remote_file_content,
+                            $local_file_content,
+                            $cover_custom_markers
+                        );
+                    }
+
+                    if ($local_file_content !== false && $local_file_content !== null && $local_file_content === $remote_file_content) {
+                        continue;
                     }
 
                     if (@file_put_contents($relative_path, $remote_file_content, LOCK_EX) !== false) {
@@ -908,7 +960,7 @@ $skin_row_text = $remote_skin_version !== null
     : '更新情報を取得できませんでした。';
 if ($skin_repair_needed) {
     $skin_row_text = ($local_skin_version !== null ? 'v' . $local_skin_version : '不明')
-        . ' のままですが、設置ファイルの参照崩れまたは不足ファイルを検出したため修復更新します。';
+        . ' のままですが、cover.html の管理範囲または不足ファイルに差分を検出したため修復更新します。';
 }
 $updater_row_text = updater_detail_text($updater_info);
 ?>

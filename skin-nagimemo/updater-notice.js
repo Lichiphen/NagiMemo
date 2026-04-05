@@ -128,7 +128,7 @@
                     populateUpdateRow(
                         'skin',
                         payload.skin.repair_needed
-                            ? '設置ファイルの参照崩れまたは不足ファイルを修復します。'
+                            ? 'cover.html の管理範囲または不足ファイルを修復します。'
                             : (payload.skin.local_version ? 'v' + payload.skin.local_version : '不明') +
                                 ' → ' +
                                 (payload.skin.remote_version ? 'v' + payload.skin.remote_version : '最新')

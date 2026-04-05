@@ -2,7 +2,7 @@
 /**
  * NagiMemo Updater
  * NagiMemo Updater v1.1.8
- * P26040603
+ * Updater Build: 2026040604
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ
@@ -361,8 +361,16 @@ function updater_detail_text($updater_info)
     return 'GitHub上の本体と一致しています。';
 }
 
-function build_update_headline($skin_needs_update, $updater_needs_update)
+function build_update_headline($skin_needs_update, $updater_needs_update, $skin_repair_needed)
 {
+    if ($skin_repair_needed && $updater_needs_update) {
+        return 'NagiMemo 一式の修復更新と nagimemo_update.php 本体の更新を検出しました。';
+    }
+
+    if ($skin_repair_needed) {
+        return 'NagiMemo 一式の設置内容に問題を検出しました。';
+    }
+
     if ($skin_needs_update && $updater_needs_update) {
         return 'GitHub 上で NagiMemo 一式と nagimemo_update.php 本体の両方に新しい更新を検出しました。';
     }
@@ -378,8 +386,16 @@ function build_update_headline($skin_needs_update, $updater_needs_update)
     return '現在の設置内容は最新版です。';
 }
 
-function build_update_intro($skin_needs_update, $updater_needs_update, $updater_info)
+function build_update_intro($skin_needs_update, $updater_needs_update, $updater_info, $skin_repair_needed)
 {
+    if ($skin_repair_needed && $updater_needs_update) {
+        return '壊れたアセット参照や不足ファイルを修復しつつ、nagimemo_update.php 本体も更新できます。';
+    }
+
+    if ($skin_repair_needed) {
+        return '壊れたアセット参照や不足ファイルを検出したため、skin-nagimemo / NagiGallery / NagiPicts / skin-nagi_sitemap を修復更新します。';
+    }
+
     if ($skin_needs_update && $updater_needs_update) {
         return 'skin-nagimemo / NagiGallery / NagiPicts / skin-nagi_sitemap と nagimemo_update.php 本体をまとめて確認・更新できます。';
     }
@@ -437,6 +453,48 @@ function build_package_update_summary($counts, $labels)
     return implode(' / ', $parts);
 }
 
+function detect_skin_health_issues()
+{
+    $issues = array();
+    $required_files = array(
+        'skin-nagimemo/shared-heatmap.css',
+        'skin-nagimemo/heatmap-labels.js',
+        'skin-nagimemo/updater-notice.js',
+        'skin-nagimemo/modules/updater-notice-modal.html',
+    );
+    $cover_files = array(
+        'skin-nagimemo/skin-cover.html',
+        'NagiGallery/skin-cover.html',
+        'NagiPicts/skin-cover.html',
+        'skin-nagi_sitemap/skin-cover.html',
+    );
+
+    foreach ($required_files as $file_path) {
+        if (!file_exists($file_path)) {
+            $issues[] = $file_path . ' が見つかりません。';
+        }
+    }
+
+    foreach ($cover_files as $cover_file) {
+        if (!file_exists($cover_file)) {
+            $issues[] = $cover_file . ' が見つかりません。';
+            continue;
+        }
+
+        $content = @file_get_contents($cover_file);
+        if ($content === false) {
+            $issues[] = $cover_file . ' を読み込めません。';
+            continue;
+        }
+
+        if (preg_match('/P20[0-9]{8,}/', $content)) {
+            $issues[] = $cover_file . ' に壊れたアセット参照を検出しました。';
+        }
+    }
+
+    return array_values(array_unique($issues));
+}
+
 $request_return_url = '';
 if (isset($_POST['return_url'])) {
     $request_return_url = sanitize_return_url($_POST['return_url']);
@@ -461,7 +519,10 @@ $zip_url = "https://github.com/{$repo_user}/{$repo_name}/archive/refs/heads/{$br
 $local_skin_version = get_local_version($version_file);
 $remote_skin_content = fetch_remote_data($remote_version_url, 5);
 $remote_skin_version = get_version_from_content($remote_skin_content);
-$skin_needs_update = $local_skin_version && $remote_skin_version && version_compare($local_skin_version, $remote_skin_version, '<');
+$skin_health_issues = detect_skin_health_issues();
+$skin_version_update = $local_skin_version && $remote_skin_version && version_compare($local_skin_version, $remote_skin_version, '<');
+$skin_repair_needed = !$skin_version_update && !empty($skin_health_issues);
+$skin_needs_update = $skin_version_update || $skin_repair_needed;
 
 $local_updater_content = @file_get_contents(__FILE__);
 $remote_updater_content = fetch_remote_data($remote_updater_url, 5);
@@ -475,6 +536,9 @@ $remote_updater_signature = $updater_info['remote_signature'];
 $updater_needs_update = $updater_info['needs_update'];
 
 $skin_signature = $remote_skin_version !== null ? 'skin:' . $remote_skin_version : '';
+if ($skin_repair_needed) {
+    $skin_signature .= ':repair';
+}
 $updater_signature = $remote_updater_signature !== null ? 'updater:' . $remote_updater_signature : '';
 $any_update_available = $skin_needs_update || $updater_needs_update;
 
@@ -486,6 +550,8 @@ if ($status_mode) {
             'local_version' => $local_skin_version,
             'remote_version' => $remote_skin_version,
             'needs_update' => $skin_needs_update,
+            'repair_needed' => $skin_repair_needed,
+            'health_issues' => $skin_health_issues,
             'signature' => $skin_signature,
             'targets' => array_values($package_dirs),
         ),
@@ -698,10 +764,14 @@ if (isset($_POST['update']) && $any_update_available) {
                     $package_summary = build_package_update_summary($updated_package_counts, $package_labels);
                     $message_lines[] = 'NagiMemo 一式を更新しました。' . ($package_summary !== '' ? ' (' . $package_summary . ')' : '');
                     $local_skin_version = $remote_skin_version;
+                    $skin_health_issues = array();
+                    $skin_repair_needed = false;
                     $skin_needs_update = false;
                 } else {
                     $message_lines[] = 'NagiMemo 一式は更新対象でしたが、差分はありませんでした。';
                     $local_skin_version = $remote_skin_version;
+                    $skin_health_issues = array();
+                    $skin_repair_needed = false;
                     $skin_needs_update = false;
                 }
             }
@@ -764,11 +834,15 @@ if (isset($_POST['update']) && $any_update_available) {
 $show_update_modal = $any_update_available && !isset($_POST['update']);
 $return_href = build_return_href($request_return_url, $fallback_return_url);
 $has_result_message = !empty($message_lines);
-$update_headline = build_update_headline($skin_needs_update, $updater_needs_update);
-$update_intro = build_update_intro($skin_needs_update, $updater_needs_update, $updater_info);
+$update_headline = build_update_headline($skin_needs_update, $updater_needs_update, $skin_repair_needed);
+$update_intro = build_update_intro($skin_needs_update, $updater_needs_update, $updater_info, $skin_repair_needed);
 $skin_row_text = $remote_skin_version !== null
     ? (($local_skin_version !== null ? 'v' . $local_skin_version : '不明') . ' → v' . $remote_skin_version)
     : '更新情報を取得できませんでした。';
+if ($skin_repair_needed) {
+    $skin_row_text = ($local_skin_version !== null ? 'v' . $local_skin_version : '不明')
+        . ' のままですが、設置ファイルの参照崩れまたは不足ファイルを検出したため修復更新します。';
+}
 $updater_row_text = updater_detail_text($updater_info);
 ?>
 <!DOCTYPE html>

@@ -51,7 +51,7 @@ NagiMemo の入手方法は、主に次の3つです。
 ## 🆙 NagiMemo Updater（一括アップデートツール）
 「スキンの更新があるたびに、FTPで何枚も上書きアップロードするのは面倒だな…」という方のために、AIと協力して**ワンクリックで最新版に更新できるツール**を用意しました。
 
-- **ダウンロード**: [nagimemo_update.php](https://cdn.jsdelivr.net/npm/@lichiphen/nagimemo-updater/nagimemo_update.php)
+- **直接ダウンロード**: [nagimemo_update.php](https://raw.githubusercontent.com/Lichiphen/NagiMemo/main/nagimemo_update.php)
 
 > [!IMPORTANT]
 > `nagimemo_update.php` は、**てがろぐ本体（`tegalog.cgi`）と同じフォルダ**に置いてください。  

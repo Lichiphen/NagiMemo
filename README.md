@@ -1,12 +1,14 @@
 # NagiMemo
 
-書くのが楽しくなる、てがろぐのスキンファイル群です。（てがろぐ V4.8.0 以降対応）
+書くのが楽しくなる、てがろぐのスキンファイル群です。（てがろぐ V4.9.0 仮対応）
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-NagiMemo-181717?logo=github)](https://github.com/Lichiphen/NagiMemo/)
 [![GitLab](https://img.shields.io/badge/GitLab-NagiMemo-FC6D26?logo=gitlab)](https://gitlab.com/Lichiphen/NagiMemo)
 
 現在ベータ版です。てがろぐはアップデートされていくCMSですので、スキン自体の完成は目指していないです。自分が使いやすいようにカスタマイズしたものですので、気ままに更新していきます。
+
+- **v1.1.9**: てがろぐ4.9.0への仮対応（note, コミック, Voicy, Steam埋め込みの表示最適化、メタディスクリプション出力の追加など）
 
 > [!NOTE]
 > NagiMemo は「てがろぐ用の見た目一式」です。  

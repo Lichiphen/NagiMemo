@@ -1642,6 +1642,11 @@ video.embeddedvideo,
 .embeddedapplemusic,
 .embeddedyoutube,
 .embeddednicovideo,
+.embeddedcomic,
+.embeddedgigaviewer,
+.embeddednote,
+.embeddedvoicy,
+.embeddedsteam,
 .cardlinkbox {
     margin-top: 0.38rem;
     margin-bottom: 2rem;
@@ -1660,7 +1665,13 @@ video.embeddedvideo + br:not(:has(+ br)),
 .cardlinkbox + br:not(:has(+ br)),
 figure.embeddedvideo + br:not(:has(+ br)),
 .embeddedyoutube + br:not(:has(+ br)),
-.embeddednicovideo + br:not(:has(+ br)) {
+.embeddednicovideo + br:not(:has(+ br)),
+.embeddedcomic + br:not(:has(+ br)),
+.embeddedgigaviewer + br:not(:has(+ br)),
+.embeddednote + br:not(:has(+ br)),
+.embeddednote + script + br:not(:has(+ br)),
+.embeddedvoicy + br:not(:has(+ br)),
+.embeddedsteam + br:not(:has(+ br)) {
     display: none;
 }
 
@@ -1731,6 +1742,85 @@ figure {
     margin-inline-start: 0px;
     margin-inline-end: 0px;
 }
+
+/* Embedded Note / Comic / Voicy / Steam Responsive */
+.embeddedcomic,
+.embeddedgigaviewer,
+.embeddedvoicy,
+.embeddedsteam {
+    position: relative;
+    width: 100% !important;
+    border-radius: var(--radius-md);
+    border: none;
+    overflow: hidden;
+    display: block;
+    box-sizing: border-box;
+    margin-top: 1.2rem !important; /* 他の埋め込みと行間を揃える */
+}
+
+/* Note 埋め込みは外部スクリプト(embed.js)が動的に高さを変え、カード自体が既に角丸等を持つため、ラッパー側の装飾を最小限にします */
+.embeddednote {
+    position: relative;
+    width: 100% !important;
+    display: block;
+    box-sizing: border-box;
+    max-width: 494px !important;
+    margin-top: 1.2rem !important; /* 他の埋め込みと行間を揃える */
+}
+
+/* 各サービス固有の最大幅と高さ（またはアスペクト比）の指定 */
+.embeddedcomic,
+.embeddedgigaviewer {
+    max-width: 560px !important;
+    aspect-ratio: 560 / 400;
+    height: auto !important;
+    background: #000000;
+}
+
+.embeddedvoicy {
+    max-width: 500px !important;
+    height: 385px !important;
+    background: #000000;
+}
+
+.embeddedsteam {
+    max-width: 646px !important;
+    height: 190px !important;
+    background: #1b2838;
+}
+
+/* 内包する iframe のスタイル */
+.embeddedcomic iframe,
+.embeddedgigaviewer iframe,
+.embeddedvoicy iframe,
+.embeddedsteam iframe {
+    border-radius: var(--radius-md);
+    border: none !important;
+    width: 100% !important;
+}
+
+.embeddednote iframe {
+    border: none !important;
+    width: 100% !important;
+    display: block;
+    /* height は embed.js が動的に制御するのを妨げないため指定しません */
+}
+
+/* アスペクト比を使用する Comic / GigaViewer の iframe は絶対配置で親いっぱいに広げる */
+.embeddedcomic iframe,
+.embeddedgigaviewer iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100% !important;
+}
+
+/* 高さ固定の Voicy / Steam の iframe は普通に高さいっぱいに */
+.embeddedvoicy iframe,
+.embeddedsteam iframe {
+    height: 100% !important;
+}
+
 
 .videotitle {
     text-align: center;

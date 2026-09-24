@@ -2,6 +2,8 @@
 
 # エージェント設定およびワークフローを独立リポジトリから除外
 .agent/
+.claude/
+CLAUDE.md
 _doc/
 _Release/
 _doc

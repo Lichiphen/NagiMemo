@@ -1,8 +1,8 @@
 <?php
 /**
  * NagiMemo Updater
- * NagiMemo Updater v1.1.8
- * Updater Build: 202604060442
+ * NagiMemo Updater v1.2.0
+ * Updater Build: 202609242156
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ

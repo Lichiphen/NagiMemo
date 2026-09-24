@@ -1,5 +1,5 @@
 // Drag-Drop Upload JS
-// NagiMemo v1.1.8
+// NagiMemo v1.2.0
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -9,7 +9,6 @@
     
     // Early exit if not logged in
     if (document.body.classList.contains('loggedin-NO')) {
-        console.log('NagiMemo: Drag-drop disabled (not logged in)');
         return;
     }
     
@@ -25,18 +24,17 @@
             overlay.style.cssText = 'position:fixed;inset:0;background:rgba(37,99,235,0.9);z-index:999999;display:none;align-items:center;justify-content:center;cursor:copy;';
             document.body.appendChild(overlay);
             
-            overlay.ondragover = function(e) {
+            overlay.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-            };
+            });
             
-            overlay.ondrop = function(e) {
+            overlay.addEventListener('drop', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('NagiMemo: DROP on overlay');
                 addFiles(e.dataTransfer.files);
                 hide();
-            };
+            });
         }
         return overlay;
     }
@@ -46,7 +44,6 @@
         if (!isActive) {
             o.style.display = 'flex';
             isActive = true;
-            console.log('NagiMemo: Show overlay');
         }
     }
 
@@ -54,14 +51,12 @@
         if (overlay && isActive) {
             overlay.style.display = 'none';
             isActive = false;
-            console.log('NagiMemo: Hide overlay');
         }
     }
 
     // Add files to collection (cumulative mode)
     function addFiles(fileList) {
         if (!fileList || fileList.length === 0) {
-            console.log('NagiMemo: No files');
             return;
         }
         
@@ -85,7 +80,6 @@
             return;
         }
         
-        console.log('NagiMemo: Added', addedCount, 'files. Total:', collectedFiles.length);
         updateFileInput();
         toast(collectedFiles.length + '枚の画像を選択中 (+' + addedCount + ')');
     }
@@ -128,7 +122,6 @@
             
             if (input.files.length > 0) {
                 input.dispatchEvent(new Event('change', {bubbles: true}));
-                console.log('NagiMemo: Assigned', input.files.length, 'files to input');
             }
         } catch (e) {
             console.error('NagiMemo:', e);
@@ -156,7 +149,6 @@
         }
         
         if (images.length > 0) {
-            console.log('NagiMemo: Pasted', images.length, 'image(s)');
             // Add to collection
             images.forEach(function(img) {
                 collectedFiles.push(img);
@@ -170,7 +162,6 @@
     // Clear collected files (called when form is submitted or reset)
     function clearFiles() {
         collectedFiles = [];
-        console.log('NagiMemo: Cleared file collection');
     }
 
     function toast(msg, err) {
@@ -243,5 +234,4 @@
     // Expose clear function globally for manual reset
     window.NagiMemoDropClear = clearFiles;
 
-    console.log('NagiMemo: Drag-drop v8 (ファイル判定強化 + 累積モード + Ctrl+V貼り付け)');
 })();

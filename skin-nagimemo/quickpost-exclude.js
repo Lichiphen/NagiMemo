@@ -1,53 +1,45 @@
-/**
- * QUICKPOST Recent Image NagiSwipe Excluder
- * Prevents NagiSwipe from triggering on recent image thumbnails in QUICKPOST.
- */
-(function() {
-    // Only run if the user is logged in (body has .loggedin-YES)
+// QUICKPOST Recent Image NagiSwipe Excluder
+// Prevents NagiSwipe from triggering on recent image thumbnails in QUICKPOST.
+// NagiMemo v1.2.0
+// Copyright (c) 2026 Lichiphen
+// Licensed under the MIT License
+// https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
+(() => {
+    'use strict';
+
     if (!document.body.classList.contains('loggedin-YES')) return;
 
     function excludeThumbnails() {
-        const thumbnails = document.querySelectorAll('.recentimginsert');
-        thumbnails.forEach(link => {
-            // Remove data-ns-index which NagiSwipe uses to identify items
-            if (link.hasAttribute('data-ns-index')) {
-                link.removeAttribute('data-ns-index');
-            }
-            
-            // Add a flag to potentially help NagiSwipe ignore it if the above isn't enough
+        // NagiSwipe が後から data-ns-index を付け直す場合があるため毎回全件を確認する
+        document.querySelectorAll('.recentimginsert').forEach((link) => {
+            // NagiSwipe が対象判定に使う属性を外し、除外フラグを付ける
+            link.removeAttribute('data-ns-index');
             link.classList.add('ns-exclude');
 
-            // Forcefully stop propagation for click events to prevent NagiSwipe's listener (on document) from catching it
-            // However, we must ensure Tegalog's internal insertion logic still works.
-
-            // Prevent dragging to avoid accidental re-upload
+            // 誤ドラッグによる再アップロードを防ぐ
             link.setAttribute('draggable', 'false');
             const img = link.querySelector('img');
             if (img) {
                 img.setAttribute('draggable', 'false');
                 img.style.webkitUserDrag = 'none';
-                img.style.userDrag = 'none';
             }
         });
     }
 
-    // Capture dragstart to be absolute sure
     document.addEventListener('dragstart', (e) => {
-        if (e.target.closest('.recentimginsert')) {
-            e.preventDefault();
-        }
+        if (e.target.closest?.('.recentimginsert')) e.preventDefault();
     }, true);
 
-    // Run periodically or on specific triggers because these thumbnails might be loaded dynamically
-    const observer = new MutationObserver((mutations) => {
-        excludeThumbnails();
-    });
+    // サムネイルは動的に追加されるため監視する（変更はフレーム単位でまとめて処理）
+    let scheduled = false;
+    new MutationObserver(() => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(() => {
+            scheduled = false;
+            excludeThumbnails();
+        });
+    }).observe(document.body, { childList: true, subtree: true });
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    // Initial run
     excludeThumbnails();
 })();

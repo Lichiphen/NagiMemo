@@ -1,4 +1,4 @@
-// NagiMemo v1.1.8
+// NagiMemo v1.2.0
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE

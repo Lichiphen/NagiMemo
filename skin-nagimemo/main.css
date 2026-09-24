@@ -3,7 +3,7 @@
 /*  Root Variables & Theme
  * ![NagiMemo Skin]
  * 
- * NagiMemo v1.1.8
+ * NagiMemo v1.2.0
  * Copyright (c) 2026 Lichiphen
  * Licensed under the MIT License
  * https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -2631,100 +2631,107 @@ ul.decorationL {
     line-height: inherit;
 }
 
-/* Share Row inside footer */
+/* Share Row inside footer (compact pills, right aligned) */
 .share-row {
     display: flex;
-    gap: 8px;
-    padding: var(--spacing-xs) var(--spacing-md);
-    border-top: 1px dashed var(--border-color);
-    background: #fcfcfc;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    padding: 6px var(--spacing-md) 10px;
 }
 
 @media (max-width: 600px) {
     .share-row {
-        padding: var(--spacing-xs);
+        padding: 4px var(--spacing-sm) 10px;
     }
 }
 
 .share-btn {
-    flex: 1;
-    display: flex;
+    --share-accent: var(--text-main);
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px 12px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.15s ease;
+    gap: 5px;
+    height: 28px;
+    padding: 0 11px;
     border: 1px solid var(--border-color);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.share-btn:hover {
+    color: var(--share-accent);
+    border-color: var(--share-accent);
 }
 .share-btn:active {
-    transform: scale(0.97);
+    transform: scale(0.95);
 }
-.share-btn svg {
-    width: 16px;
-    height: 16px;
+.share-btn:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+.share-icon {
+    flex-shrink: 0;
+    width: 12px;
+    height: 12px;
     fill: currentColor;
 }
 
-/* X (Twitter) */
-.share-x {
-    background-color: #000;
-    color: #fff;
-    border-color: #000;
-}
+/* X */
 .share-x:hover {
-    background-color: #222;
+    background: #0f1419;
+    border-color: #0f1419;
     color: #fff;
 }
 
 /* Copy */
 .share-copy {
-    background-color: #fff;
-    color: #475569;
+    --share-accent: var(--primary-color);
 }
-.share-copy:hover {
-    background-color: #f1f5f9;
-    color: #334155;
+.share-copy .share-icon-done {
+    display: none;
+}
+.share-copy.is-copied,
+.share-copy.is-copied:hover {
+    --share-accent: #047857;
+    color: #047857;
+    background: #ecfdf5;
+    border-color: #6ee7b7;
+}
+.share-copy.is-error,
+.share-copy.is-error:hover {
+    --share-accent: #b91c1c;
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+.share-copy.is-copied .share-icon-copy {
+    display: none;
+}
+.share-copy.is-copied .share-icon-done {
+    display: block;
+    animation: sharePop 0.25s ease;
+}
+@keyframes sharePop {
+    from { transform: scale(0.4); }
+    to { transform: scale(1); }
 }
 
-/* Toast Notification */
-#toast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -40%);
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-#toast.toast-show {
-    animation: toastFade 2s ease-in-out forwards;
-}
-@keyframes toastFade {
-    0% { opacity: 0; transform: translate(-50%, -40%); }
-    15% { opacity: 1; transform: translate(-50%, -50%); }
-    85% { opacity: 1; transform: translate(-50%, -50%); }
-    100% { opacity: 0; transform: translate(-50%, -60%); }
-}
-.toast-content {
-    background-color: rgba(15, 23, 42, 0.9); /* slate-900/90 */
-    color: white;
-    padding: 8px 24px;
-    border-radius: 9999px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+@media (prefers-reduced-motion: reduce) {
+    .share-btn,
+    .share-copy.is-copied .share-icon-done {
+        transition: none;
+        animation: none;
+    }
 }
 
 /* Credits Modal */

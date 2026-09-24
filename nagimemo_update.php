@@ -1,8 +1,8 @@
 <?php
 /**
  * NagiMemo Updater
- * NagiMemo Updater v1.2.1
- * Updater Build: 202609242220
+ * NagiMemo Updater v1.2.2
+ * Updater Build: 202609242255
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ
@@ -58,6 +58,26 @@ $insecure_default_passwords = array('ねこちゃん');	// 過去の配布版の
 $tegalog_psif_file = __DIR__ . '/psif.cgi';
 $tegalog_ini_file = __DIR__ . '/tegalog.ini';
 $tegalog_session_cookie = 'fomlid';	// + tegalog.ini の coexistsuffix
+$state_file = __DIR__ . '/nagimemo_update_state.php';	// 前回このアップデーターが書き込んだ配布版のハッシュ
+// 利用者が編集してよいファイル。編集されていれば上書きせず、新しい配布版を *.new.html として横に置く
+$protected_files = array(
+    'skin-nagimemo/modules/sidebar.html',
+    'skin-nagimemo/modules/footer.html',
+    'skin-nagimemo/modules/noindex.html',
+);
+// 過去に配布したことのある内容のハッシュ（BOM除去・改行LFで正規化した sha1）。これと一致すれば「未編集」とみなす
+$known_distributed_hashes = array(
+    'skin-nagimemo/modules/sidebar.html' => array('9846ae6149b9348fac576e2427d2180a92843e9c', 'b7fdc4a215e261967175da62113e933c8407230f', 'd36fa41c3d8f0db122c9506da46947cb6c34ff25'),
+    'skin-nagimemo/modules/footer.html' => array('486f8fe597141151dfdea9c3de3962503fda7a87', '71cc7975f10203851d56531bb6c28d648b1c3583', '78bde6dedecb83bb59d0fe635ae5f3556136ee7a', 'df29ac7f08f79201d0de5dc01e8f1332160e2d79', 'ffdebb3c98e8864a3745dfec6c66e4561c52f64c'),
+    'skin-nagimemo/modules/noindex.html' => array('65e46e5e387364606dbf039ede71fb7c7d0d6363'),
+);
+
+// アップデーターの画面・状態APIはブラウザや中継サーバーにキャッシュさせない
+if (!headers_sent()) {
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+}
 $user_settings_marker = "// ============================================================\n// 【ユーザー設定項目】ここを自由に書き換えてください\n// ============================================================\n";
 $system_settings_marker = "// ============================================================\n// 【システム設定】ここから下は通常触る必要はありません\n// ============================================================\n";
 
@@ -75,12 +95,16 @@ function respond_json($payload, $status_code)
     exit;
 }
 
-function fetch_remote_data($url, $timeout)
+function fetch_remote_data($url, $timeout, $bypass_cache = true)
 {
+    // raw.githubusercontent.com 等は数分間キャッシュを返すため、クエリを変えて常に最新を取りに行く
+    if ($bypass_cache) {
+        $url .= (strpos($url, '?') === false ? '?' : '&') . 'nocache=' . time() . mt_rand(1000, 9999);
+    }
     $ctx = stream_context_create(array(
         'http' => array(
             'timeout' => $timeout,
-            'header' => "User-Agent: NagiMemo-Updater\r\n",
+            'header' => "User-Agent: NagiMemo-Updater\r\nCache-Control: no-cache\r\nPragma: no-cache\r\n",
         ),
     ));
 
@@ -319,6 +343,70 @@ function render_hidden_return_input($return_url)
     }
 
     return '<input type="hidden" name="return_url" value="' . htmlspecialchars($return_url, ENT_QUOTES, 'UTF-8') . '">';
+}
+
+// ============================================================
+// 利用者が編集してよいファイルの保護
+// ============================================================
+
+function nm_normalized_hash($content)
+{
+    $content = str_replace("\r\n", "\n", (string) $content);
+    if (strncmp($content, "\xEF\xBB\xBF", 3) === 0) {
+        $content = substr($content, 3);
+    }
+    return sha1($content);
+}
+
+function nm_state_load($file)
+{
+    $data = array('distributed' => array());
+    if (!is_file($file)) {
+        return $data;
+    }
+    $raw = @file_get_contents($file);
+    $pos = $raw === false ? false : strpos($raw, "\n");
+    $json = $pos === false ? null : json_decode(substr($raw, $pos + 1), true);
+    return is_array($json) ? array_merge($data, $json) : $data;
+}
+
+function nm_state_save($file, $data)
+{
+    $body = "<?php http_response_code(404); exit; ?>\n" . json_encode($data);
+    if (@file_put_contents($file, $body, LOCK_EX) === false) {
+        return false;
+    }
+    @chmod($file, 0600);
+    return true;
+}
+
+// 手元のファイルが「配布版のまま（未編集）」かどうか
+function nm_is_unmodified_distribution($path, $local_content, $state, $known_hashes, $local_version, $repo_user, $repo_name)
+{
+    $local_hash = nm_normalized_hash($local_content);
+    // 1. 前回このアップデーターが書き込んだ内容
+    if (isset($state['distributed'][$path]) && $state['distributed'][$path] === $local_hash) {
+        return true;
+    }
+    // 2. 過去に配布した内容
+    if (isset($known_hashes[$path]) && in_array($local_hash, $known_hashes[$path], true)) {
+        return true;
+    }
+    // 3. 導入中バージョンのタグにある内容（タグの内容は変わらないのでキャッシュ回避は不要）
+    if ($local_version !== null && $local_version !== '') {
+        $tag_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_name}/v{$local_version}/" . $path;
+        $tag_content = fetch_remote_data($tag_url, 5, false);
+        if ($tag_content !== null && nm_normalized_hash($tag_content) === $local_hash) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function nm_new_copy_path($path)
+{
+    $dot = strrpos($path, '.');
+    return $dot === false ? $path . '.new' : substr($path, 0, $dot) . '.new' . substr($path, $dot);
 }
 
 // ============================================================
@@ -1312,6 +1400,8 @@ if (isset($_POST['update']) && $any_update_available && nm_csrf_valid()) {
             $extract_root = "{$repo_name}-{$branch}/";
 
             if ($skin_needs_update) {
+                $update_state = nm_state_load($state_file);
+                $kept_custom_files = array();
                 for ($i = 0; $i < $zip->numFiles; $i++) {
                     $filename = $zip->getNameIndex($i);
                     if (strpos($filename, $extract_root) !== 0) {
@@ -1351,6 +1441,24 @@ if (isset($_POST['update']) && $any_update_available && nm_csrf_valid()) {
                         $local_file_content = @file_get_contents($relative_path);
                     }
 
+                    if (in_array($relative_path, $protected_files, true) && $local_file_content !== null && $local_file_content !== false) {
+                        $remote_hash = nm_normalized_hash($remote_file_content);
+                        if (nm_normalized_hash($local_file_content) === $remote_hash) {
+                            $update_state['distributed'][$relative_path] = $remote_hash;
+                            continue;
+                        }
+                        if (!nm_is_unmodified_distribution($relative_path, $local_file_content, $update_state, $known_distributed_hashes, $local_skin_version, $repo_user, $repo_name)) {
+                            // 利用者が編集したファイルは残し、新しい配布版を横に置く
+                            $new_copy = nm_new_copy_path($relative_path);
+                            if (@file_put_contents($new_copy, $remote_file_content, LOCK_EX) !== false) {
+                                $kept_custom_files[] = $relative_path . '（新しい配布版: ' . basename($new_copy) . '）';
+                            } else {
+                                $kept_custom_files[] = $relative_path;
+                            }
+                            continue;
+                        }
+                    }
+
                     if (in_array($relative_path, $cover_files, true)) {
                         $remote_file_content = merge_cover_with_local_custom_blocks(
                             $remote_file_content,
@@ -1364,6 +1472,9 @@ if (isset($_POST['update']) && $any_update_available && nm_csrf_valid()) {
                     }
 
                     if (@file_put_contents($relative_path, $remote_file_content, LOCK_EX) !== false) {
+                        if (in_array($relative_path, $protected_files, true)) {
+                            $update_state['distributed'][$relative_path] = nm_normalized_hash($remote_file_content);
+                        }
                         $updated_skin_files++;
                         if (!isset($updated_package_counts[$target_root])) {
                             $updated_package_counts[$target_root] = 0;
@@ -1373,6 +1484,11 @@ if (isset($_POST['update']) && $any_update_available && nm_csrf_valid()) {
                         $message_lines[] = $relative_path . ' の更新に失敗しました。';
                         $error = true;
                     }
+                }
+
+                nm_state_save($state_file, $update_state);
+                if (!empty($kept_custom_files)) {
+                    $message_lines[] = '次のファイルは編集されているため上書きしませんでした: ' . implode('、', $kept_custom_files);
                 }
 
                 if ($updated_skin_files > 0) {

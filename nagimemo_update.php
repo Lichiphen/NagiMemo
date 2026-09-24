@@ -1,8 +1,8 @@
 <?php
 /**
  * NagiMemo Updater
- * NagiMemo Updater v1.2.0
- * Updater Build: 202609242156
+ * NagiMemo Updater v1.2.1
+ * Updater Build: 202609242220
  * GitHubから最新版のNagiMemo一式と nagimemo_update.php を取得・更新するスクリプト
  *
  * 設置場所: てがろぐ(tegalog.cgi)と同じディレクトリ
@@ -13,11 +13,13 @@
 // ============================================================
 
 /**
- * 1. アップデート専用パスワード
- * 空にするとパスワードなしで誰でもアクセス可能になります。
- * セキュリティのため、何らかの合言葉を設定することを強く推奨します。
+ * 1. アップデート専用パスワード（通常は空のままでOK）
+ * 空のままにすると、初回アクセス時にブラウザ上でパスワードを設定できます。
+ * （初回設定は、てがろぐに管理者でログインしている人だけが行えます）
+ * 画面で設定したパスワードは同じフォルダの nagimemo_update_auth.php に暗号化して保存され、
+ * 画面から変更できます。ここに合言葉を書いた場合は、画面で設定するまでその合言葉でログインできます。
  */
-$update_password = 'ねこちゃん';
+$update_password = '';
 
 /**
  * 2. IP制限
@@ -46,6 +48,16 @@ $updater_file = basename(__FILE__);
 $updater_entry = 'nagimemo_update.php';
 $fallback_return_url = 'tegalog.cgi';
 $status_mode = isset($_GET['mode']) && $_GET['mode'] === 'status';
+$auth_file = __DIR__ . '/nagimemo_update_auth.php';
+$remember_cookie = 'nagimemo_updater_remember';
+$remember_days = 30;
+$min_password_length = 8;
+$max_login_failures = 10;
+$login_failure_window = 900;
+$insecure_default_passwords = array('ねこちゃん');	// 過去の配布版の初期値（公開済みなので無効扱い）
+$tegalog_psif_file = __DIR__ . '/psif.cgi';
+$tegalog_ini_file = __DIR__ . '/tegalog.ini';
+$tegalog_session_cookie = 'fomlid';	// + tegalog.ini の coexistsuffix
 $user_settings_marker = "// ============================================================\n// 【ユーザー設定項目】ここを自由に書き換えてください\n// ============================================================\n";
 $system_settings_marker = "// ============================================================\n// 【システム設定】ここから下は通常触る必要はありません\n// ============================================================\n";
 
@@ -307,6 +319,586 @@ function render_hidden_return_input($return_url)
     }
 
     return '<input type="hidden" name="return_url" value="' . htmlspecialchars($return_url, ENT_QUOTES, 'UTF-8') . '">';
+}
+
+// ============================================================
+// 認証（パスワードは nagimemo_update_auth.php にハッシュで保存）
+// ============================================================
+
+function nm_random_hex($bytes)
+{
+    if (function_exists('random_bytes')) {
+        return bin2hex(random_bytes($bytes));
+    }
+    return bin2hex(openssl_random_pseudo_bytes($bytes));
+}
+
+function nm_is_https()
+{
+    if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
+        return true;
+    }
+    if (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443) {
+        return true;
+    }
+    return isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https';
+}
+
+function nm_cookie_path()
+{
+    $script = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '/';
+    $dir = str_replace('\\', '/', dirname($script));
+    return rtrim($dir, '/') . '/';
+}
+
+function nm_set_cookie($name, $value, $expires)
+{
+    $parts = array(
+        rawurlencode($name) . '=' . rawurlencode($value),
+        'Path=' . nm_cookie_path(),
+        'Expires=' . gmdate('D, d M Y H:i:s', $expires) . ' GMT',
+        'Max-Age=' . max(0, $expires - time()),
+        'HttpOnly',
+        'SameSite=Lax',
+    );
+    if (nm_is_https()) {
+        $parts[] = 'Secure';
+    }
+    header('Set-Cookie: ' . implode('; ', $parts), false);
+}
+
+function nm_auth_default()
+{
+    return array(
+        'version' => 1,
+        'password_hash' => '',
+        'updated_at' => 0,
+        'tokens' => array(),
+        'failures' => array(),
+    );
+}
+
+function nm_auth_load($file)
+{
+    if (!is_file($file)) {
+        return nm_auth_default();
+    }
+    $raw = @file_get_contents($file);
+    if ($raw === false) {
+        return nm_auth_default();
+    }
+    $pos = strpos($raw, "\n");
+    $data = $pos === false ? null : json_decode(substr($raw, $pos + 1), true);
+    if (!is_array($data)) {
+        return nm_auth_default();
+    }
+    return array_merge(nm_auth_default(), $data);
+}
+
+function nm_auth_save($file, $data)
+{
+    // 先頭行で即終了させるので、URL で直接開かれても中身は出力されない
+    $body = "<?php http_response_code(404); exit; ?>\n" . json_encode($data);
+    if (@file_put_contents($file, $body, LOCK_EX) === false) {
+        return false;
+    }
+    @chmod($file, 0600);
+    return true;
+}
+
+function nm_auth_prune(&$data, $failure_window)
+{
+    $now = time();
+    $tokens = array();
+    foreach ($data['tokens'] as $token) {
+        if (isset($token['expires']) && (int) $token['expires'] > $now) {
+            $tokens[] = $token;
+        }
+    }
+    usort($tokens, function ($a, $b) {
+        return (int) $b['created'] - (int) $a['created'];
+    });
+    $data['tokens'] = array_slice($tokens, 0, 10);
+
+    $failures = array();
+    foreach ($data['failures'] as $at) {
+        if ((int) $at > $now - $failure_window) {
+            $failures[] = (int) $at;
+        }
+    }
+    $data['failures'] = $failures;
+}
+
+function nm_find_remember_token($data, $cookie_value)
+{
+    $pieces = explode(':', (string) $cookie_value, 2);
+    if (count($pieces) !== 2) {
+        return null;
+    }
+    foreach ($data['tokens'] as $index => $token) {
+        if ($token['id'] === $pieces[0] && hash_equals($token['hash'], hash('sha256', $pieces[1]))) {
+            return $index;
+        }
+    }
+    return null;
+}
+
+function nm_issue_remember_token(&$data, $cookie_name, $days)
+{
+    $id = nm_random_hex(8);
+    $secret = nm_random_hex(32);
+    $expires = time() + $days * 86400;
+    $agent = isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 120) : '';
+    $data['tokens'][] = array(
+        'id' => $id,
+        'hash' => hash('sha256', $secret),
+        'created' => time(),
+        'expires' => $expires,
+        'agent' => $agent,
+    );
+    nm_set_cookie($cookie_name, $id . ':' . $secret, $expires);
+    return $expires;
+}
+
+// てがろぐに権限Lv.9(管理者)でログイン中かを、てがろぐのセッションファイルから直接確認する
+function nm_tegalog_admin_user($psif_file, $ini_file, $cookie_base)
+{
+    // tegalog.ini: Cookie 名の接尾辞(coexistsuffix) と ユーザ情報(userids: ID<>権限<>名前<>...、複数は <,> 区切り)
+    $suffix = '';
+    $userids = 'admin<>9<>';	// 未設定なら初期ID admin(Lv.9)
+    $ini = @file($ini_file, FILE_IGNORE_NEW_LINES);
+    if ($ini !== false) {
+        foreach ($ini as $line) {
+            if (strpos($line, 'coexistsuffix=') === 0) {
+                $suffix = preg_replace('/[^a-zA-Z0-9]/', '', substr($line, 14));
+            } elseif (strpos($line, 'userids=') === 0) {
+                $userids = substr($line, 8);
+            }
+        }
+    }
+
+    $cookie_name = $cookie_base . $suffix;
+    if (empty($_COOKIE[$cookie_name])) {
+        return null;
+    }
+    $session_id = (string) $_COOKIE[$cookie_name];
+    $lines = @file($psif_file, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        return null;
+    }
+
+    $user_id = null;
+    foreach ($lines as $line) {
+        if (strpos($line, 'SESSION=') !== 0) {
+            continue;
+        }
+        $parts = explode(',', substr($line, 8), 3);
+        if (count($parts) === 3 && (int) $parts[0] >= time() && hash_equals($parts[1], $session_id)) {
+            $user_id = trim($parts[2]);
+            break;
+        }
+    }
+    if ($user_id === null || $user_id === '') {
+        return null;
+    }
+
+    foreach (explode('<,>', $userids) as $entry) {
+        $fields = explode('<>', $entry);
+        if ($fields[0] === $user_id && isset($fields[1]) && (int) $fields[1] >= 9) {
+            return $user_id;
+        }
+    }
+    return null;
+}
+
+function nm_csrf_token()
+{
+    if (empty($_SESSION['nm_csrf'])) {
+        $_SESSION['nm_csrf'] = nm_random_hex(16);
+    }
+    return $_SESSION['nm_csrf'];
+}
+
+function nm_csrf_field()
+{
+    return '<input type="hidden" name="csrf" value="' . htmlspecialchars(nm_csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
+}
+
+function nm_csrf_valid()
+{
+    return isset($_POST['csrf'], $_SESSION['nm_csrf']) && hash_equals($_SESSION['nm_csrf'], (string) $_POST['csrf']);
+}
+
+function nm_flash($message = null, $is_error = false)
+{
+    if ($message !== null) {
+        $_SESSION['nm_flash'] = array('message' => $message, 'error' => $is_error);
+        return null;
+    }
+    $flash = isset($_SESSION['nm_flash']) ? $_SESSION['nm_flash'] : null;
+    unset($_SESSION['nm_flash']);
+    return $flash;
+}
+
+function nm_redirect_self($updater_file, $return_url)
+{
+    $location = $updater_file;
+    if ($return_url !== '') {
+        $location .= '?return_url=' . rawurlencode($return_url);
+    }
+    header('Location: ' . $location, true, 303);
+    exit;
+}
+
+function nm_validate_new_password($new1, $new2, $min_length)
+{
+    if ($new1 !== $new2) {
+        return '確認用のパスワードが一致しません。';
+    }
+    if (function_exists('mb_strlen') ? mb_strlen($new1, 'UTF-8') < $min_length : strlen($new1) < $min_length) {
+        return 'パスワードは ' . $min_length . ' 文字以上にしてください。';
+    }
+    return null;
+}
+
+function nm_render_auth_page($view, $vars)
+{
+    extract($vars);
+    $h = function ($value) {
+        return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    };
+    ?>
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex,nofollow">
+        <title><?php echo $view === 'setup' ? 'Setup' : 'Login'; ?> - NagiMemo Updater</title>
+        <style>
+            :root {
+                --bg-color: #fcfaf2;
+                --container-bg: #ffffff;
+                --accent-color: #7d6b5d;
+                --text-color: #4a4238;
+                --muted-text: #85786c;
+                --border-color: #e0dbd1;
+                --warning-color: #a35d5d;
+            }
+            * { box-sizing: border-box; }
+            body {
+                background-color: var(--bg-color);
+                color: var(--text-color);
+                font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                padding: 16px;
+            }
+            .login-box {
+                background: var(--container-bg);
+                padding: 36px 32px;
+                border-radius: 14px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+                border: 1px solid var(--border-color);
+                width: min(100%, 380px);
+                text-align: center;
+            }
+            h1 {
+                color: var(--accent-color);
+                font-size: 1.3rem;
+                margin: 0 0 12px;
+                letter-spacing: 0.08em;
+            }
+            p {
+                margin: 0 0 16px;
+                font-size: 0.92rem;
+                line-height: 1.75;
+            }
+            .note {
+                color: var(--muted-text);
+                font-size: 0.85rem;
+                text-align: left;
+            }
+            .error {
+                color: var(--warning-color);
+                font-weight: 700;
+            }
+            input[type="password"] {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                margin-bottom: 12px;
+                background: #fffdf9;
+                font-size: 1rem;
+            }
+            .remember {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: flex-start;
+                margin: 2px 0 16px;
+                font-size: 0.88rem;
+                cursor: pointer;
+                text-align: left;
+            }
+            .remember input {
+                width: 16px;
+                height: 16px;
+                accent-color: var(--accent-color);
+            }
+            button,
+            .back-link {
+                width: 100%;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                background: var(--accent-color);
+                color: #fff;
+                cursor: pointer;
+                transition: opacity 0.2s;
+                font-size: 1rem;
+                text-decoration: none;
+                display: inline-block;
+            }
+            button:hover,
+            .back-link:hover {
+                opacity: 0.92;
+            }
+            .back-link {
+                margin-top: 10px;
+                background: #b2a394;
+            }
+            code {
+                background: #f5f0e8;
+                padding: 1px 5px;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-box">
+            <h1>NagiMemo Updater</h1>
+            <?php if ($error_message !== ''): ?>
+                <p class="error"><?php echo $h($error_message); ?></p>
+            <?php endif; ?>
+
+            <?php if ($view === 'login'): ?>
+                <p>アップデート画面を開くにはパスワードが必要です。</p>
+                <form method="post">
+                    <?php echo nm_csrf_field(); ?>
+                    <?php echo render_hidden_return_input($return_url); ?>
+                    <input type="hidden" name="auth_action" value="login">
+                    <input type="password" name="password" placeholder="Password" autocomplete="current-password" required autofocus>
+                    <label class="remember"><input type="checkbox" name="remember" value="1">このブラウザにログイン情報を保存する（<?php echo (int) $remember_days; ?>日間）</label>
+                    <button type="submit">ログイン</button>
+                </form>
+            <?php elseif ($view === 'setup' && $tegalog_admin !== null): ?>
+                <p>アップデーター用のパスワードを設定してください。<br>次回からはこのパスワードでログインします。</p>
+                <form method="post">
+                    <?php echo nm_csrf_field(); ?>
+                    <?php echo render_hidden_return_input($return_url); ?>
+                    <input type="hidden" name="auth_action" value="setup">
+                    <input type="password" name="new_password" placeholder="新しいパスワード（<?php echo (int) $min_length; ?>文字以上）" autocomplete="new-password" minlength="<?php echo (int) $min_length; ?>" required autofocus>
+                    <input type="password" name="new_password_confirm" placeholder="もう一度入力" autocomplete="new-password" minlength="<?php echo (int) $min_length; ?>" required>
+                    <label class="remember"><input type="checkbox" name="remember" value="1" checked>このブラウザにログイン情報を保存する（<?php echo (int) $remember_days; ?>日間）</label>
+                    <button type="submit">パスワードを設定する</button>
+                </form>
+                <p class="note">てがろぐに管理者「<?php echo $h($tegalog_admin); ?>」でログインしているため設定できます。</p>
+            <?php else: ?>
+                <p>アップデーターのパスワードがまだ設定されていません。</p>
+                <p class="note">安全のため、最初の設定は<strong>てがろぐに管理者（権限Lv.9）でログインした状態</strong>でのみ行えます。てがろぐの管理画面にログインしてから、もう一度このページを開いてください。</p>
+                <a class="back-link" style="background: var(--accent-color);" href="<?php echo $h($tegalog_admin_url); ?>">てがろぐにログインする</a>
+                <p class="note" style="margin-top: 16px;">画面から設定できない場合は、<code>nagimemo_update.php</code> をテキストエディタで開き、<code>$update_password</code> に合言葉を書いてアップロードしても使えます。</p>
+            <?php endif; ?>
+            <a class="back-link" href="<?php echo $h($back_href); ?>">戻る</a>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+/**
+ * 認証を行う。ログイン済みなら状態の配列を返し、そうでなければログイン/初期設定画面を出して終了する。
+ */
+function nm_require_auth($config)
+{
+    extract($config);
+
+    if (function_exists('session_status') ? session_status() !== PHP_SESSION_ACTIVE : session_id() === '') {
+        @ini_set('session.use_strict_mode', '1');
+        @ini_set('session.cookie_httponly', '1');
+        @ini_set('session.cookie_samesite', 'Lax');
+        if (nm_is_https()) {
+            @ini_set('session.cookie_secure', '1');
+        }
+        session_name('NAGIMEMO_UPDATER');
+        session_start();
+    }
+
+    $auth = nm_auth_load($auth_file);
+    nm_auth_prune($auth, $failure_window);
+
+    $has_hash = $auth['password_hash'] !== '';
+    $legacy_ok = !$has_hash && is_string($legacy_password) && $legacy_password !== ''
+        && !in_array($legacy_password, $insecure_passwords, true);
+    $source = $has_hash ? 'file' : ($legacy_ok ? 'legacy' : 'none');
+    $authed = !empty($_SESSION['nagimemo_auth']);
+    $remember_index = null;
+
+    // 保存済みログイン（クッキー）でのログイン
+    if (isset($_COOKIE[$remember_cookie])) {
+        $remember_index = nm_find_remember_token($auth, $_COOKIE[$remember_cookie]);
+        if ($remember_index === null) {
+            nm_set_cookie($remember_cookie, '', time() - 3600);
+        } elseif (!$authed && $source !== 'none') {
+            session_regenerate_id(true);
+            $_SESSION['nagimemo_auth'] = true;
+            $authed = true;
+        }
+    }
+    if ($source === 'none') {
+        // パスワード未設定（または公開済みの初期値のまま）ならログインを無効にして初期設定へ
+        $authed = false;
+        unset($_SESSION['nagimemo_auth']);
+    }
+
+    $error_message = '';
+    $action = isset($_POST['auth_action']) ? (string) $_POST['auth_action'] : '';
+
+    if ($action !== '' && !nm_csrf_valid()) {
+        $error_message = '画面の有効期限が切れました。もう一度お試しください。';
+        $action = '';
+    }
+
+    if ($action === 'login' && !$authed && $source !== 'none') {
+        if (count($auth['failures']) >= $max_failures) {
+            $error_message = 'ログインの失敗が続いたため、しばらく時間をおいてからお試しください。';
+        } else {
+            $password = isset($_POST['password']) ? (string) $_POST['password'] : '';
+            $ok = $source === 'file'
+                ? password_verify($password, $auth['password_hash'])
+                : hash_equals($legacy_password, $password);
+            if ($ok) {
+                session_regenerate_id(true);
+                $_SESSION['nagimemo_auth'] = true;
+                $auth['failures'] = array();
+                if (!empty($_POST['remember'])) {
+                    nm_issue_remember_token($auth, $remember_cookie, $remember_days);
+                }
+                nm_auth_save($auth_file, $auth);
+                nm_redirect_self($updater_file, $return_url);
+            }
+            $auth['failures'][] = time();
+            nm_auth_save($auth_file, $auth);
+            sleep(1);
+            $error_message = 'パスワードが一致しません。';
+        }
+    }
+
+    $tegalog_admin = null;
+    if ($source === 'none') {
+        $tegalog_admin = nm_tegalog_admin_user($tegalog_psif_file, $tegalog_ini_file, $tegalog_cookie);
+    }
+
+    if ($action === 'setup' && $source === 'none' && $tegalog_admin !== null) {
+        $new1 = isset($_POST['new_password']) ? (string) $_POST['new_password'] : '';
+        $new2 = isset($_POST['new_password_confirm']) ? (string) $_POST['new_password_confirm'] : '';
+        $invalid = nm_validate_new_password($new1, $new2, $min_length);
+        if ($invalid !== null) {
+            $error_message = $invalid;
+        } else {
+            $auth['password_hash'] = password_hash($new1, PASSWORD_DEFAULT);
+            $auth['updated_at'] = time();
+            $auth['tokens'] = array();
+            $auth['failures'] = array();
+            if (!empty($_POST['remember'])) {
+                nm_issue_remember_token($auth, $remember_cookie, $remember_days);
+            }
+            if (nm_auth_save($auth_file, $auth)) {
+                session_regenerate_id(true);
+                $_SESSION['nagimemo_auth'] = true;
+                nm_flash('パスワードを設定しました。');
+                nm_redirect_self($updater_file, $return_url);
+            }
+            $error_message = basename($auth_file) . ' を保存できませんでした。フォルダの書き込み権限を確認してください。';
+        }
+    }
+
+    if (!$authed) {
+        nm_render_auth_page($source === 'none' ? 'setup' : 'login', array(
+            'error_message' => $error_message,
+            'return_url' => $return_url,
+            'back_href' => $back_href,
+            'remember_days' => $remember_days,
+            'min_length' => $min_length,
+            'tegalog_admin' => $tegalog_admin,
+            'tegalog_admin_url' => $tegalog_admin_url,
+        ));
+    }
+
+    // ---- ここから先はログイン済み：アカウント操作 ----
+    if ($action === 'logout') {
+        if ($remember_index !== null) {
+            array_splice($auth['tokens'], $remember_index, 1);
+            nm_auth_save($auth_file, $auth);
+        }
+        nm_set_cookie($remember_cookie, '', time() - 3600);
+        $_SESSION = array();
+        session_regenerate_id(true);
+        nm_redirect_self($updater_file, $return_url);
+    }
+
+    if ($action === 'forget_all') {
+        $auth['tokens'] = array();
+        nm_auth_save($auth_file, $auth);
+        nm_set_cookie($remember_cookie, '', time() - 3600);
+        nm_flash('保存されていたログイン情報をすべて解除しました。');
+        nm_redirect_self($updater_file, $return_url);
+    }
+
+    if ($action === 'change_password') {
+        $current = isset($_POST['current_password']) ? (string) $_POST['current_password'] : '';
+        $current_ok = $source === 'file'
+            ? password_verify($current, $auth['password_hash'])
+            : hash_equals((string) $legacy_password, $current);
+        $new1 = isset($_POST['new_password']) ? (string) $_POST['new_password'] : '';
+        $new2 = isset($_POST['new_password_confirm']) ? (string) $_POST['new_password_confirm'] : '';
+        $invalid = $current_ok ? nm_validate_new_password($new1, $new2, $min_length) : '現在のパスワードが違います。';
+        if ($invalid !== null) {
+            nm_flash($invalid, true);
+        } else {
+            $keep_remember = $remember_index !== null;
+            $auth['password_hash'] = password_hash($new1, PASSWORD_DEFAULT);
+            $auth['updated_at'] = time();
+            $auth['tokens'] = array();
+            if ($keep_remember) {
+                nm_issue_remember_token($auth, $remember_cookie, $remember_days);
+            }
+            if (nm_auth_save($auth_file, $auth)) {
+                nm_flash('パスワードを変更しました。ほかのブラウザに保存されていたログイン情報は解除されています。');
+            } else {
+                nm_flash(basename($auth_file) . ' を保存できませんでした。フォルダの書き込み権限を確認してください。', true);
+            }
+        }
+        nm_redirect_self($updater_file, $return_url);
+    }
+
+    $remember_expires = null;
+    if ($remember_index !== null && isset($auth['tokens'][$remember_index])) {
+        $remember_expires = (int) $auth['tokens'][$remember_index]['expires'];
+    }
+
+    return array(
+        'source' => $source,
+        'remember_expires' => $remember_expires,
+        'remembered_count' => count($auth['tokens']),
+        'flash' => nm_flash(),
+    );
 }
 
 function updater_status_text($updater_info)
@@ -619,6 +1211,27 @@ if (!empty($allowed_ips) && !in_array($remote_addr, $allowed_ips, true)) {
     die('Access Denied: Your IP address is not allowed.');
 }
 
+$auth_state = null;
+if (!$status_mode) {
+    $auth_state = nm_require_auth(array(
+        'auth_file' => $auth_file,
+        'legacy_password' => $update_password,
+        'insecure_passwords' => $insecure_default_passwords,
+        'remember_cookie' => $remember_cookie,
+        'remember_days' => $remember_days,
+        'min_length' => $min_password_length,
+        'max_failures' => $max_login_failures,
+        'failure_window' => $login_failure_window,
+        'tegalog_psif_file' => $tegalog_psif_file,
+        'tegalog_ini_file' => $tegalog_ini_file,
+        'tegalog_cookie' => $tegalog_session_cookie,
+        'tegalog_admin_url' => $fallback_return_url . '?mode=admin',
+        'updater_file' => $updater_file,
+        'return_url' => $request_return_url,
+        'back_href' => build_return_href($request_return_url, $fallback_return_url),
+    ));
+}
+
 $remote_version_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_name}/{$branch}/{$version_file}";
 $remote_updater_url = "https://raw.githubusercontent.com/{$repo_user}/{$repo_name}/{$branch}/{$updater_entry}";
 $zip_url = "https://github.com/{$repo_user}/{$repo_name}/archive/refs/heads/{$branch}.zip";
@@ -676,123 +1289,6 @@ if ($status_mode) {
     ), 200);
 }
 
-session_start();
-
-$auth_error = false;
-if (!empty($update_password)) {
-    if (isset($_POST['password']) && $_POST['password'] === $update_password) {
-        $_SESSION['nagimemo_auth'] = true;
-    } elseif (isset($_POST['password'])) {
-        $auth_error = true;
-    }
-}
-
-if (!empty($update_password) && empty($_SESSION['nagimemo_auth'])) {
-    ?>
-    <!DOCTYPE html>
-    <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Authentication - NagiMemo Updater</title>
-        <style>
-            :root {
-                --bg-color: #fcfaf2;
-                --container-bg: #ffffff;
-                --accent-color: #7d6b5d;
-                --text-color: #4a4238;
-                --border-color: #e0dbd1;
-                --warning-color: #d77b7b;
-            }
-            body {
-                background-color: var(--bg-color);
-                color: var(--text-color);
-                font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                margin: 0;
-                padding: 16px;
-                box-sizing: border-box;
-            }
-            .login-box {
-                background: var(--container-bg);
-                padding: 40px;
-                border-radius: 14px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-                border: 1px solid var(--border-color);
-                width: min(100%, 360px);
-                text-align: center;
-            }
-            h1 {
-                color: var(--accent-color);
-                font-size: 1.3rem;
-                margin: 0 0 12px;
-                letter-spacing: 0.08em;
-            }
-            p {
-                margin: 0 0 18px;
-                font-size: 0.95rem;
-                line-height: 1.7;
-            }
-            .error {
-                color: var(--warning-color);
-                font-weight: 700;
-            }
-            input[type="password"] {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                margin-bottom: 16px;
-                box-sizing: border-box;
-                background: #fffdf9;
-            }
-            button,
-            .back-link {
-                width: 100%;
-                padding: 12px;
-                border: none;
-                border-radius: 8px;
-                background: var(--accent-color);
-                color: #fff;
-                cursor: pointer;
-                transition: opacity 0.2s;
-                font-size: 1rem;
-                text-decoration: none;
-                display: inline-block;
-                box-sizing: border-box;
-            }
-            button:hover,
-            .back-link:hover {
-                opacity: 0.92;
-            }
-            .back-link {
-                margin-top: 10px;
-                background: #b2a394;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="login-box">
-            <h1>NagiMemo Updater</h1>
-            <p>アップデート画面を開くにはパスワードが必要です。</p>
-            <?php if ($auth_error): ?>
-                <p class="error">パスワードが一致しません。</p>
-            <?php endif; ?>
-            <form method="post">
-                <?php echo render_hidden_return_input($request_return_url); ?>
-                <input type="password" name="password" placeholder="Password" required autofocus>
-                <button type="submit">Login</button>
-            </form>
-            <a class="back-link" href="<?php echo htmlspecialchars(build_return_href($request_return_url, $fallback_return_url), ENT_QUOTES, 'UTF-8'); ?>">戻る</a>
-        </div>
-    </body>
-    </html>
-    <?php
-    exit;
-}
 
 $message_lines = array();
 $error = false;
@@ -800,7 +1296,7 @@ $manual_replace_path = '';
 $updated_skin_files = 0;
 $updated_package_counts = array();
 
-if (isset($_POST['update']) && $any_update_available) {
+if (isset($_POST['update']) && $any_update_available && nm_csrf_valid()) {
     $temp_zip = 'temp_update.zip';
     $zip_binary = fetch_remote_data($zip_url, 20);
 
@@ -1234,6 +1730,65 @@ $updater_row_text = updater_detail_text($updater_info);
             flex-wrap: wrap;
             gap: 10px;
         }
+        .account-box {
+            margin-top: 22px;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            background: #fffdf9;
+        }
+        .account-box summary {
+            cursor: pointer;
+            padding: 14px 18px;
+            font-weight: 700;
+            color: var(--accent-color);
+            list-style: none;
+        }
+        .account-box summary::-webkit-details-marker {
+            display: none;
+        }
+        .account-box summary::after {
+            content: "＋";
+            float: right;
+            color: var(--muted-text);
+        }
+        .account-box[open] summary::after {
+            content: "－";
+        }
+        .account-body {
+            padding: 0 18px 18px;
+            display: grid;
+            gap: 16px;
+        }
+        .account-body p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--muted-text);
+        }
+        .account-body form {
+            display: grid;
+            gap: 10px;
+        }
+        .account-body input[type="password"] {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #fff;
+            font-size: 0.95rem;
+        }
+        .account-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .account-actions form {
+            display: block;
+        }
+        .btn.small {
+            padding: 9px 14px;
+            font-size: 0.88rem;
+        }
         @media (max-width: 640px) {
             .container {
                 padding: 26px 18px;
@@ -1277,6 +1832,7 @@ $updater_row_text = updater_detail_text($updater_info);
                 </ul>
                 <div class="update-modal-actions">
                     <form method="post">
+                        <?php echo nm_csrf_field(); ?>
                         <?php echo render_hidden_return_input($request_return_url); ?>
                         <button type="submit" name="update" value="1" class="btn">今すぐアップデートする</button>
                     </form>
@@ -1306,6 +1862,13 @@ $updater_row_text = updater_detail_text($updater_info);
                 </div>
             </div>
 
+            <?php if (!empty($auth_state['flash'])): ?>
+                <div class="result-box<?php echo $auth_state['flash']['error'] ? ' error' : ''; ?>"><?php echo htmlspecialchars($auth_state['flash']['message'], ENT_QUOTES, 'UTF-8'); ?></div>
+            <?php endif; ?>
+            <?php if ($auth_state['source'] === 'legacy'): ?>
+                <div class="notice-box">現在は nagimemo_update.php に書かれた合言葉でログインしています。下の「アカウント設定」で新しいパスワードを設定すると、以後は画面から変更できるようになります。</div>
+            <?php endif; ?>
+
             <?php if ($has_result_message): ?>
                 <div class="result-box<?php echo $error ? ' error' : ''; ?>"><?php echo htmlspecialchars(implode("\n", $message_lines), ENT_QUOTES, 'UTF-8'); ?></div>
             <?php elseif ($any_update_available): ?>
@@ -1333,12 +1896,51 @@ $updater_row_text = updater_detail_text($updater_info);
 
             <div class="actions">
                 <form method="post">
+                    <?php echo nm_csrf_field(); ?>
                     <?php echo render_hidden_return_input($request_return_url); ?>
                     <button type="submit" name="update" value="1" class="btn" <?php echo !$any_update_available ? 'disabled' : ''; ?>>今すぐアップデートする</button>
                 </form>
                 <a class="btn secondary" href="<?php echo htmlspecialchars($return_href, ENT_QUOTES, 'UTF-8'); ?>">元のページへ戻る</a>
                 <a class="btn ghost" href="<?php echo htmlspecialchars($updater_file, ENT_QUOTES, 'UTF-8'); ?>">再読み込み</a>
             </div>
+
+            <details class="account-box"<?php echo !empty($auth_state['flash']['error']) ? ' open' : ''; ?>>
+                <summary>アカウント設定</summary>
+                <div class="account-body">
+                    <p>
+                        <?php if ($auth_state['remember_expires'] !== null): ?>
+                            このブラウザはログイン情報を保存しています（<?php echo htmlspecialchars(date('Y/m/d', $auth_state['remember_expires']), ENT_QUOTES, 'UTF-8'); ?> まで有効）。
+                        <?php else: ?>
+                            このブラウザはログイン情報を保存していません（ブラウザを閉じるとログアウトされます）。
+                        <?php endif; ?>
+                    </p>
+                    <form method="post">
+                        <?php echo nm_csrf_field(); ?>
+                        <?php echo render_hidden_return_input($request_return_url); ?>
+                        <input type="hidden" name="auth_action" value="change_password">
+                        <input type="password" name="current_password" placeholder="現在のパスワード" autocomplete="current-password" required>
+                        <input type="password" name="new_password" placeholder="新しいパスワード（<?php echo (int) $min_password_length; ?>文字以上）" autocomplete="new-password" minlength="<?php echo (int) $min_password_length; ?>" required>
+                        <input type="password" name="new_password_confirm" placeholder="新しいパスワード（確認）" autocomplete="new-password" minlength="<?php echo (int) $min_password_length; ?>" required>
+                        <div><button type="submit" class="btn small">パスワードを変更する</button></div>
+                    </form>
+                    <div class="account-actions">
+                        <form method="post">
+                            <?php echo nm_csrf_field(); ?>
+                            <?php echo render_hidden_return_input($request_return_url); ?>
+                            <input type="hidden" name="auth_action" value="logout">
+                            <button type="submit" class="btn small secondary">ログアウト</button>
+                        </form>
+                        <?php if ($auth_state['remembered_count'] > 0): ?>
+                            <form method="post">
+                                <?php echo nm_csrf_field(); ?>
+                                <?php echo render_hidden_return_input($request_return_url); ?>
+                                <input type="hidden" name="auth_action" value="forget_all">
+                                <button type="submit" class="btn small ghost">保存したログインをすべて解除（<?php echo (int) $auth_state['remembered_count']; ?>件）</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </details>
 
             <?php if ($manual_replace_path !== ''): ?>
                 <div class="notice-box" style="margin-top: 18px;">自己更新ができなかったため、<?php echo htmlspecialchars($manual_replace_path, ENT_QUOTES, 'UTF-8'); ?> を作成しました。FTP 等で現在の nagimemo_update.php と置き換えてください。</div>

@@ -1,5 +1,5 @@
 // NagiMemo Edit JS
-// NagiMemo v1.2.2
+// NagiMemo v1.2.3
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE

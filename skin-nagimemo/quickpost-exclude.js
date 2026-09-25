@@ -1,6 +1,6 @@
 // QUICKPOST Recent Image NagiSwipe Excluder
 // Prevents NagiSwipe from triggering on recent image thumbnails in QUICKPOST.
-// NagiMemo v1.2.2
+// NagiMemo v1.2.3
 // Copyright (c) 2026 Lichiphen
 // Licensed under the MIT License
 // https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE

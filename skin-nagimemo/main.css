@@ -3,7 +3,7 @@
 /*  Root Variables & Theme
  * ![NagiMemo Skin]
  * 
- * NagiMemo v1.2.2
+ * NagiMemo v1.2.3
  * Copyright (c) 2026 Lichiphen
  * Licensed under the MIT License
  * https://github.com/Lichiphen/NagiMemo/blob/main/LICENSE
@@ -2825,6 +2825,70 @@ ul.decorationL {
 }
 .modal-close-btn:active {
     transform: scale(0.97);
+}
+
+/* Xアプリ(iOS)内ブラウザでのシェア案内（share.js が生成） */
+#share-x-guide {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+#share-x-guide.modal-open {
+    display: flex;
+}
+.share-guide-box {
+    text-align: left;
+}
+.share-guide-box h3 {
+    text-align: center;
+}
+.share-guide-lead {
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.7;
+}
+.share-guide-status {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #047857;
+}
+.share-guide-status.is-error {
+    color: #b91c1c;
+}
+.share-guide-text {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #f8fafc;
+    color: var(--text-main);
+    font: inherit;
+    font-size: 16px; /* iOS がフォーカス時に拡大しない大きさ */
+    line-height: 1.5;
+    resize: none;
+}
+.share-guide-steps {
+    margin: 14px 0 0;
+    padding-left: 1.4em;
+    list-style: decimal;
+    font-size: 13px;
+    color: #475569;
+    line-height: 1.7;
+}
+.share-guide-steps li + li {
+    margin-top: 6px;
+}
+.share-guide-box .modal-close-btn {
+    margin-top: 20px;
 }
 
 /* 日付折り畳みリスト内の追加装飾 */

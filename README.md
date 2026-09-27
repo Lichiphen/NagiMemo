@@ -193,8 +193,8 @@ GitHub に慣れていない方向けに、ざっくり分けると次の理解�
 
 1. てがろぐの管理画面で **[設定] → [システム設定] → 【画像拡大スクリプトの選択】** を開きます。
 2. 「**他のスクリプトを使う：URLを指定**」を選び、次の 2 つをコピーして貼り付け、保存します。
-   - 「JavaScriptのURL」欄: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js`
-   - 「CSSのURL」欄: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.css`
+   - 「JavaScriptのURL」欄: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js?93db749`
+   - 「CSSのURL」欄: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.css?97c58dd`
 
 これで、投稿の画像をクリックすると NagiSwipe で大きく表示されます。
 
@@ -205,7 +205,7 @@ NagiManga は、自分のサーバーに置いて使います。置き方は [Na
 1. 上の「JavaScriptのURL」欄で、NagiSwipe の URL の **うしろに半角スペースを 1 つ入れて**、NagiManga の URL を続けて書きます（1 行のまま続けます）。「CSSのURL」欄はそのままで大丈夫です。
 
    ```
-   https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js https://あなたのサイト/nagimanga/viewer/NagiManga.js
+   https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js?93db749 https://あなたのサイト/nagimanga/viewer/NagiManga.js?d978231
    ```
 
    NagiManga の URL（`https://〜/viewer/NagiManga.js` の部分）は、NagiManga の管理画面の「共有用のタグ」の中に書いてあります。

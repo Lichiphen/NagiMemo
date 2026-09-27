@@ -161,6 +161,43 @@ GitHub に慣れていない方向けに、ざっくり分けると次の理解�
 
 ---
 
+## 🖼️ 画像ポップアップ（NagiSwipe）・漫画ビューアー（NagiManga）を使う
+
+デモサイトの画像の拡大表示には、軽量な画像ポップアップの [**NagiSwipe**](https://github.com/Lichiphen/NagiSwipe) を使っています。同梱の漫画ビューアー **NagiManga** も使えます。どちらも **スキンの編集は不要** で、てがろぐの管理画面の設定だけで読み込めます。
+
+### NagiSwipe（画像ポップアップ）
+
+1. てがろぐの管理画面で **[設定] → [システム設定] → 【画像拡大スクリプトの選択】** を開きます。
+2. 「**他のスクリプトを使う：URLを指定**」を選び、次の 2 つを入力して保存します。
+   - JavaScript の URL: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js`
+   - CSS の URL: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.css`
+
+投稿の画像をクリックすると NagiSwipe で開きます。NagiMemo は、ログイン中の投稿欄の「直近画像」サムネイルでは NagiSwipe が開かないようにしてあります。
+
+### NagiManga（漫画ビューアー）
+
+NagiManga は、あなたのサーバーに置いて使います。設置方法は [NagiManga の README](https://github.com/Lichiphen/NagiSwipe/blob/main/manga/README.md) を見てください。
+
+1. 上と同じ「JavaScript の URL」欄に、NagiSwipe の URL のあとへ **半角スペースを 1 つ空けて** NagiManga.js の URL を続けて書きます（CSS 欄はそのままで大丈夫です）。
+
+   ```
+   https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js https://あなたのサイト/nagimanga/viewer/NagiManga.js
+   ```
+
+2. NagiManga の管理画面で作品を開き、「共有用のタグ」の下にある **「URL 形式」** をコピーします。
+3. てがろぐに、リンクの文字を付けて投稿します。
+
+   ```
+   [第1話を読む]https://あなたのサイト/nagimanga/read.php?nagimanga=Ab3dE5gH7jK9&dir=rtl
+   ```
+
+> [!NOTE]
+> - てがろぐの投稿には HTML を書けないため、NagiManga の「共有用のタグ」ではなく **「URL 形式」** を使います。
+> - てがろぐと NagiManga を別のドメインに置いている場合は、NagiManga の「設定 → 別のサイトに埋め込む場合」にてがろぐのアドレスを登録してください。
+> - スキンの `NAGIMEMO:CUSTOM-FOOT` に `<script>` を書いて読み込むこともできますが、上の方法ならスキンの更新の影響を受けません。
+
+---
+
 ## ⚖️ ライセンスについて
 NagiMemo は **MIT License** を適用しています。
 自分のサイトで使うだけであれば、著作権表示を消さない限り自由にご利用いただけます。

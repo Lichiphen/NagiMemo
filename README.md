@@ -163,38 +163,43 @@ GitHub に慣れていない方向けに、ざっくり分けると次の理解�
 
 ## 🖼️ 画像ポップアップ（NagiSwipe）・漫画ビューアー（NagiManga）を使う
 
-デモサイトの画像の拡大表示には、軽量な画像ポップアップの [**NagiSwipe**](https://github.com/Lichiphen/NagiSwipe) を使っています。同梱の漫画ビューアー **NagiManga** も使えます。どちらも **スキンの編集は不要** で、てがろぐの管理画面の設定だけで読み込めます。
+デモサイトでは、画像をクリックしたときの拡大表示に [**NagiSwipe**](https://github.com/Lichiphen/NagiSwipe) を使っています。NagiSwipe に付いている漫画ビューアー **NagiManga** も使えます。
+どちらも **スキンのファイルを書き換える必要はありません**。てがろぐの管理画面で設定するだけです。
 
-### NagiSwipe（画像ポップアップ）
+### NagiSwipe（画像の拡大表示）
 
 1. てがろぐの管理画面で **[設定] → [システム設定] → 【画像拡大スクリプトの選択】** を開きます。
-2. 「**他のスクリプトを使う：URLを指定**」を選び、次の 2 つを入力して保存します。
-   - JavaScript の URL: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js`
-   - CSS の URL: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.css`
+2. 「**他のスクリプトを使う：URLを指定**」を選び、次の 2 つをコピーして貼り付け、保存します。
+   - 「JavaScriptのURL」欄: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js`
+   - 「CSSのURL」欄: `https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.css`
 
-投稿の画像をクリックすると NagiSwipe で開きます。NagiMemo は、ログイン中の投稿欄の「直近画像」サムネイルでは NagiSwipe が開かないようにしてあります。
+これで、投稿の画像をクリックすると NagiSwipe で大きく表示されます。
 
 ### NagiManga（漫画ビューアー）
 
-NagiManga は、あなたのサーバーに置いて使います。設置方法は [NagiManga の README](https://github.com/Lichiphen/NagiSwipe/blob/main/manga/README.md) を見てください。
+NagiManga は、自分のサーバーに置いて使います。置き方は [NagiManga の説明](https://github.com/Lichiphen/NagiSwipe/blob/main/manga/README.md) を見てください。置いたあとは、次の 3 つだけです。
 
-1. 上と同じ「JavaScript の URL」欄に、NagiSwipe の URL のあとへ **半角スペースを 1 つ空けて** NagiManga.js の URL を続けて書きます（CSS 欄はそのままで大丈夫です）。
+1. 上の「JavaScriptのURL」欄で、NagiSwipe の URL の **うしろに半角スペースを 1 つ入れて**、NagiManga の URL を続けて書きます（1 行のまま続けます）。「CSSのURL」欄はそのままで大丈夫です。
 
    ```
    https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js https://あなたのサイト/nagimanga/viewer/NagiManga.js
    ```
 
-2. NagiManga の管理画面で作品を開き、「共有用のタグ」の下にある **「URL 形式」** をコピーします。
-3. てがろぐに、リンクの文字を付けて投稿します。
+   NagiManga の URL（`https://〜/viewer/NagiManga.js` の部分）は、NagiManga の管理画面の「共有用のタグ」の中に書いてあります。
+
+2. NagiManga の管理画面で作品を開き、「共有用のタグ」の下にある **「URL 形式」** の「コピー」を押します。
+3. てがろぐに、リンクの文字（下の例では「第1話を読む」）を付けて投稿します。
 
    ```
    [第1話を読む]https://あなたのサイト/nagimanga/read.php?nagimanga=Ab3dE5gH7jK9&dir=rtl
    ```
 
+   投稿の「第1話を読む」を押すと、その場で漫画が開きます。
+
 > [!NOTE]
-> - てがろぐの投稿には HTML を書けないため、NagiManga の「共有用のタグ」ではなく **「URL 形式」** を使います。
-> - てがろぐと NagiManga を別のドメインに置いている場合は、NagiManga の「設定 → 別のサイトに埋め込む場合」にてがろぐのアドレスを登録してください。
-> - スキンの `NAGIMEMO:CUSTOM-FOOT` に `<script>` を書いて読み込むこともできますが、上の方法ならスキンの更新の影響を受けません。
+> - 「共有用のタグ」はブログなど向けのもので、てがろぐの投稿には使えません。てがろぐには **「URL 形式」** を貼ってください。
+> - 「URL 形式」の欄が見当たらないときは、NagiManga を最新版に更新してください。
+> - てがろぐと NagiManga のアドレスの始まり（`https://〜/` の部分）が違う場合は、NagiManga の管理画面の「設定 → 別のサイトに埋め込む場合」に、てがろぐのアドレス（例: `https://blog.example.com`）を登録してください。
 
 ---
 

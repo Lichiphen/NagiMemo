@@ -205,14 +205,14 @@ NagiManga は、自分のサーバーに置いて使います。置き方は [Na
 1. 上の「JavaScriptのURL」欄で、NagiSwipe の URL の **うしろに半角スペースを 1 つ入れて**、NagiManga の URL を続けて書きます（1 行のまま続けます）。「CSSのURL」欄はそのままで大丈夫です。
 
    ```
-   https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js?93db749 https://あなたのサイト/nagimanga/viewer/NagiManga.js?d978231
+   https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@v1.3.0/NagiSwipe-main.js?93db749 https://あなたのサイト/nagimanga/viewer/NagiManga.js?377d47e
    ```
 
    NagiManga の URL（`https://〜/viewer/NagiManga.js` の部分）は、NagiManga の管理画面の「共有用のタグ」の中に書いてあります。
 
 2. **画像のない投稿でも** 漫画を開けるように設定します。てがろぐは、画像のない投稿のページでは上の欄のファイルを読み込まないためです。[設定] → [ページの表示] → 【投稿本文の表示／URL処理】 の「▼画像URLを画像として埋め込む表示」にある **「画像リンクに独自のclass属性値を追加する」** にチェックを入れ、`class="` と `"` の間の欄に `nagimanga` と入力して保存します。
 
-3. NagiManga の管理画面で作品を開き、「共有用のタグ」の下にある **「URL 形式」** の「コピー」を押します。
+3. NagiManga の管理画面で作品を開き、いちばん上にある **「共有リンク」** の「コピー」を押します。
 4. てがろぐに、リンクの文字（下の例では「第1話を読む」）を付けて投稿します。
 
    ```
@@ -222,8 +222,8 @@ NagiManga は、自分のサーバーに置いて使います。置き方は [Na
    投稿の「第1話を読む」を押すと、その場で漫画が開きます。
 
 > [!NOTE]
-> - 「共有用のタグ」はブログなど向けのもので、てがろぐの投稿には使えません。てがろぐには **「URL 形式」** を貼ってください。
-> - 「URL 形式」の欄が見当たらないときは、NagiManga を最新版に更新してください。
+> - ブログ用の HTML タグ（「くわしい設定」の中）は、てがろぐの投稿には使えません。てがろぐには **「共有リンク」** を貼ってください。
+> - 「共有リンク」の欄が見当たらないときは、NagiManga を最新版に更新してください。
 > - てがろぐと NagiManga のアドレスの始まり（`https://〜/` の部分）が違う場合は、NagiManga の管理画面の「設定 → 別のサイトに埋め込む場合」に、てがろぐのアドレス（例: `https://blog.example.com`）を登録してください。
 
 ---

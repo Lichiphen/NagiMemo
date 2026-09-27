@@ -198,6 +198,8 @@ GitHub に慣れていない方向けに、ざっくり分けると次の理解�
 
 これで、投稿の画像をクリックすると NagiSwipe で大きく表示されます。
 
+※ URL の `@` の後ろ（`@93db749` など）は、ファイルのバージョンを表す値です。NagiSwipe が更新されると、この README の値も新しくなります。新しい版を使いたいときは、ここの URL を貼り直してください（貼り直すまでは、今の版のまま表示が変わりません）。
+
 ### NagiManga（漫画ビューアー）
 
 NagiManga は、自分のサーバーに置いて使います。置き方は [NagiManga の説明](https://github.com/Lichiphen/NagiSwipe/blob/main/manga/README.md) を見てください。置いたあとは、次の 4 つだけです。
@@ -208,7 +210,7 @@ NagiManga は、自分のサーバーに置いて使います。置き方は [Na
    https://cdn.jsdelivr.net/gh/Lichiphen/NagiSwipe@93db749/NagiSwipe-main.js https://あなたのサイト/nagimanga/viewer/NagiManga.js
    ```
 
-   NagiManga の URL（`https://〜/viewer/NagiManga.js` の部分）は、NagiManga の管理画面の「共有用のタグ」の中に書いてあります。
+   NagiManga の管理画面の **「設置用コード」** に、この欄にそのまま貼れる 1 行（NagiSwipe と NagiManga の両方、キャッシュバスター付き）があります。NagiManga を更新したら、そこの新しい 1 行に貼り替えてください。
 
 2. **画像のない投稿でも** 漫画を開けるように設定します。てがろぐは、画像のない投稿のページでは上の欄のファイルを読み込まないためです。[設定] → [ページの表示] → 【投稿本文の表示／URL処理】 の「▼画像URLを画像として埋め込む表示」にある **「画像リンクに独自のclass属性値を追加する」** にチェックを入れ、`class="` と `"` の間の欄に `nagimanga` と入力して保存します。
 
